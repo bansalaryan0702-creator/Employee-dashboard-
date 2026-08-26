@@ -6,7 +6,6 @@ import fs from "fs";
 import sharp from "sharp";
 import { v4 as uuidv4 } from 'uuid';
 import { createServer as createViteServer } from "vite";
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import { fileURLToPath } from "url";
@@ -14,13 +13,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
-// Lazy S3 client initialization
-let s3Client: S3Client | null = null;
-
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3.2";
 const OLLAMA_VISION_MODEL = process.env.OLLAMA_VISION_MODEL || "llava";
-const GDRIVE_SCRIPT_URL = process.env.GOOGLE_DRIVE_SCRIPT_URL || "";
 
 function getCloudinary() {
   if (!cloudinary.config().cloud_name) {
@@ -58,40 +53,6 @@ async function cloudinaryUpload(fileBase64: string, folder: string, publicId: st
   }
   const result = await response.json();
   return result.secure_url;
-}
-
-function getS3FileUrl(bucketName: string, key: string): string {
-  const endpoint = process.env.S3_ENDPOINT;
-  const publicUrl = process.env.S3_PUBLIC_URL;
-  if (publicUrl) return `${publicUrl}/${key}`;
-  if (endpoint) return `${endpoint}/${bucketName}/${key}`;
-  const region = process.env.AWS_REGION || "us-east-1";
-  return `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
-}
-
-function getS3Client() {
-  if (!s3Client) {
-    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-    const region = process.env.AWS_REGION || "us-east-1";
-    const endpoint = process.env.S3_ENDPOINT || undefined;
-
-    if (!accessKeyId || !secretAccessKey) {
-      throw new Error("AWS credentials (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY) are missing in environment variables.");
-    }
-
-    const config: any = {
-      region,
-      credentials: { accessKeyId, secretAccessKey }
-    };
-    if (endpoint) {
-      config.endpoint = endpoint;
-      config.forcePathStyle = true;
-    }
-
-    s3Client = new S3Client(config);
-  }
-  return s3Client;
 }
 
 // Default DB state with fallback to original real-world values from the website
@@ -284,15 +245,8 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
-  // Serve locally stored files
-  app.get("/api/local-file/:filename", (req, res) => {
-    const filePath = path.join(process.cwd(), "uploads", req.params.filename);
-    if (!fs.existsSync(filePath)) return res.status(404).send("File not found");
-    res.sendFile(filePath);
-  });
-
-  // File Upload endpoint (Cloudinary → Google Drive → S3 → Local)
-  app.post("/api/upload-s3", async (req, res) => {
+  // File Upload endpoint (Cloudinary)
+  app.post("/api/upload", async (req, res) => {
     try {
       const { fileName, fileType, base64Data } = req.body;
 
@@ -300,97 +254,34 @@ async function startServer() {
         return res.status(400).json({ error: "fileName, fileType, and base64Data are required" });
       }
 
-      // Priority 1: Cloudinary unsigned upload (free 25GB)
-      if (process.env.CLOUDINARY_CLOUD_NAME) {
-        try {
-          const base64Full = `data:${fileType};base64,${base64Data}`;
-          const url = await cloudinaryUpload(base64Full, "dashboard", `${Date.now()}-${Math.random().toString(36).slice(2,8)}`);
-          if (url) return res.json({ success: true, url });
-        } catch (cloudErr: any) {
-          console.error("Cloudinary upload failed, trying next option:", cloudErr.message);
-        }
+      if (!process.env.CLOUDINARY_CLOUD_NAME) {
+        return res.status(500).json({ error: "Cloudinary is not configured" });
       }
 
-      // Priority 2: Google Drive via Apps Script
-      if (GDRIVE_SCRIPT_URL) {
-        try {
-          const response = await fetch(GDRIVE_SCRIPT_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ fileName, fileData: base64Data, mimeType: fileType })
-          });
-          const result = await response.json();
-          if (result.success && result.url) {
-            return res.json({ success: true, url: result.url });
-          }
-        } catch (gdriveErr: any) {
-          console.error("Google Drive upload failed, trying next option:", gdriveErr.message);
-        }
-      }
-
-      // Priority 3: S3 / Cloudflare R2
-      const bucketName = process.env.AWS_S3_BUCKET_NAME;
-      if (bucketName && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-        const client = getS3Client();
-        const buffer = Buffer.from(base64Data, "base64");
-        const uniqueFileName = `${uuidv4()}-${fileName}`;
-        const command = new PutObjectCommand({
-          Bucket: bucketName,
-          Key: `catalog/${uniqueFileName}`,
-          Body: buffer,
-          ContentType: fileType,
-        });
-        await client.send(command);
-        const fileUrl = getS3FileUrl(bucketName, `catalog/${uniqueFileName}`);
-        return res.json({ success: true, url: fileUrl });
-      }
-
-      // Priority 4: Local filesystem
-      const uploadsDir = path.join(process.cwd(), "uploads");
-      if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-      const buffer = Buffer.from(base64Data, "base64");
-      const uniqueFileName = `${uuidv4()}-${fileName}`;
-      const filePath = path.join(uploadsDir, uniqueFileName);
-      fs.writeFileSync(filePath, buffer);
-      return res.json({ success: true, url: `/api/local-file/${uniqueFileName}` });
+      const base64Full = `data:${fileType};base64,${base64Data}`;
+      const url = await cloudinaryUpload(base64Full, "dashboard", `${Date.now()}-${Math.random().toString(36).slice(2,8)}`);
+      if (url) return res.json({ success: true, url });
+      return res.status(500).json({ error: "Upload failed" });
     } catch (error: any) {
       console.error("File upload error:", error);
       res.status(500).json({ error: error.message || "Failed to upload file" });
     }
   });
 
-  // Proxy image requests to AWS S3 to bypass 403 Forbidden on private buckets
+  // Proxy external images (Cloudinary, etc.) to bypass CORS
   app.get("/api/proxy-image", async (req, res) => {
     try {
       const url = req.query.url as string;
       if (!url) {
         return res.status(400).send("URL is required");
       }
-
-      const s3Match = url.match(/https:\/\/([^.]+)\.s3\.[^.]+\.amazonaws\.com\/(.+)/);
-      if (s3Match) {
-        const bucketName = s3Match[1];
-        const key = decodeURIComponent(s3Match[2]);
-        if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-          return res.redirect(url);
-        }
-        const client = getS3Client();
-        const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
-        const response = await client.send(command);
-        if (response.ContentType) res.setHeader("Content-Type", response.ContentType);
-        res.setHeader("Cache-Control", response.CacheControl || "public, max-age=31536000");
-        const stream = response.Body as any;
-        stream.pipe(res);
-      } else {
-        // For Cloudinary and other URLs, fetch and pipe
-        const imgRes = await fetch(url);
-        if (!imgRes.ok) return res.status(imgRes.status).send("Failed to fetch image");
-        const ct = imgRes.headers.get("content-type");
-        if (ct) res.setHeader("Content-Type", ct);
-        res.setHeader("Cache-Control", "public, max-age=31536000");
-        const buffer = Buffer.from(await imgRes.arrayBuffer());
-        res.send(buffer);
-      }
+      const imgRes = await fetch(url);
+      if (!imgRes.ok) return res.status(imgRes.status).send("Failed to fetch image");
+      const ct = imgRes.headers.get("content-type");
+      if (ct) res.setHeader("Content-Type", ct);
+      res.setHeader("Cache-Control", "public, max-age=31536000");
+      const buffer = Buffer.from(await imgRes.arrayBuffer());
+      res.send(buffer);
     } catch (error: any) {
       console.error("Proxy image error:", error);
       res.status(500).send("Failed to load image");
@@ -1110,26 +1001,17 @@ Constraints:
 
       if (attachment && attachment.url && attachment.name) {
         let contentToAttach;
-        let isS3 = false;
-        const bucketName = process.env.AWS_S3_BUCKET_NAME;
-        if (bucketName) {
-           const match = attachment.url.match(/https:\/\/([^.]+)\.s3\.[^.]+\.amazonaws\.com\/(.+)/);
-           if (match) {
-             const key = decodeURIComponent(match[2]);
-             const client = getS3Client();
-             const command = new GetObjectCommand({ Bucket: match[1], Key: key });
-             const response = await client.send(command);
-             if (response.Body) {
-               const byteArray = await response.Body.transformToByteArray();
-               contentToAttach = Buffer.from(byteArray);
-               isS3 = true;
-             }
-           }
-        }
-        
-        if (!isS3 && attachment.url.startsWith('data:')) {
+
+        if (attachment.url.startsWith('data:')) {
             const base64Data = attachment.url.split(',')[1];
             contentToAttach = Buffer.from(base64Data, 'base64');
+        } else {
+            // Fetch from external URL (Cloudinary, etc.)
+            const resp = await fetch(attachment.url);
+            if (resp.ok) {
+              const arrayBuf = await resp.arrayBuffer();
+              contentToAttach = Buffer.from(arrayBuf);
+            }
         }
 
         if (contentToAttach) {

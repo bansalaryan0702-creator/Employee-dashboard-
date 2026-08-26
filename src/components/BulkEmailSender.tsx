@@ -157,9 +157,9 @@ export default function BulkEmailSender() {
 
     let attachmentData = attachment;
     if (attachment && !attachment.url) {
-      setStatus({ type: 'info', message: 'Uploading attachment to S3...' });
+      setStatus({ type: 'info', message: 'Uploading attachment...' });
       try {
-        const uploadRes = await fetch('/api/upload-s3', {
+        const uploadRes = await fetch('/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

@@ -305,7 +305,7 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
           const base64String = reader.result as string;
           const base64Data = base64String.split(',')[1];
           try {
-            const response = await fetch('/api/upload-s3', {
+            const response = await fetch('/api/upload', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -458,7 +458,7 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
       const base64Data = base64String.split(',')[1];
 
       try {
-        const response = await fetch('/api/upload-s3', {
+        const response = await fetch('/api/upload', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -474,11 +474,11 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
         if (response.ok && data.success) {
           setFormData(prev => ({ ...prev, imageUrl: data.url }));
         } else {
-          setUploadError(data.error || 'Failed to upload image to S3');
+          setUploadError(data.error || 'Failed to upload image');
         }
       } catch (err: any) {
         console.error("Upload failed", err);
-        setUploadError(err.message || 'An error occurred during S3 upload');
+        setUploadError(err.message || 'An error occurred during upload');
       } finally {
         setIsUploading(false);
       }

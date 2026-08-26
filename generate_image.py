@@ -2,55 +2,42 @@ import sys
 import json
 import base64
 import io
+import requests
+import urllib.parse
 from PIL import Image
 
 def generate_product_image(cropped_image_b64: str, product_name: str, description: str, colors: list) -> dict:
-    import torch
-    from diffusers import StableDiffusionXLPipeline, EulerAncestralDiscreteScheduler
-
-    model_id = "stabilityai/sdxl-turbo"
-
-    pipe = StableDiffusionXLPipeline.from_pretrained(
-        model_id,
-        torch_dtype=torch.float16,
-        variant="fp16",
-        use_safetensors=True,
-    )
-    pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(pipe.scheduler.config)
-    pipe.to("cuda")
-
     color_str = ", ".join(colors) if colors else "standard"
     prompt = (
         f"Professional product photography of {product_name}, "
         f"{description}. "
         f"Colors available: {color_str}. "
         f"Clean white background, studio lighting, high quality, "
-        f"e-commerce style product photo, centered, sharp focus"
+        f"e-commerce style product photo, centered, sharp focus, "
+        f"photorealistic, 4K, commercial photography"
     )
 
-    negative_prompt = (
-        "blurry, low quality, distorted, text, watermark, logo, "
-        "background clutter, multiple products, amateur photography"
-    )
+    encoded_prompt = urllib.parse.quote(prompt)
+    url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=768&height=576&model=flux&seed={hash(product_name) % 10000}"
 
-    image = pipe(
-        prompt=prompt,
-        negative_prompt=negative_prompt,
-        num_inference_steps=4,
-        guidance_scale=0.0,
-        width=768,
-        height=576,
-    ).images[0]
+    try:
+        r = requests.get(url, timeout=120, headers={"User-Agent": "Mozilla/5.0"})
+        r.raise_for_status()
 
-    buffered = io.BytesIO()
-    image.save(buffered, format="WEBP", quality=90)
-    img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+        image = Image.open(io.BytesIO(r.content))
+        image = image.resize((768, 576), Image.LANCZOS)
 
-    return {
-        "image_base64": img_base64,
-        "mime_type": "image/webp",
-        "prompt_used": prompt
-    }
+        buffered = io.BytesIO()
+        image.save(buffered, format="WEBP", quality=90)
+        img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+        return {
+            "image_base64": img_base64,
+            "mime_type": "image/webp",
+            "prompt_used": prompt
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 
 def crop_product_from_catalogue(catalogue_b64: str, region: dict = None) -> str:

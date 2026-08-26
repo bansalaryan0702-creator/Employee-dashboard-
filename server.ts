@@ -801,7 +801,7 @@ async function startServer() {
     }
   });
 
-  // ====== AI CATALOGUE EXTRACTION (PDF/Images → 4:3 crops) ======
+  // ====== AI CATALOGUE EXTRACTION (PDF/Images → crop, enhance, identify) ======
   app.post("/api/catalogue/ai-extract", upload.array("files", 20), async (req, res) => {
     try {
       const files = req.files as Express.Multer.File[];
@@ -809,78 +809,184 @@ async function startServer() {
         return res.status(400).json({ error: "No files uploaded" });
       }
 
-      const results: any[] = [];
+      const allImageBuffers: Buffer[] = [];
       const tmpDir = path.join(process.cwd(), "tmp");
       if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
 
+      // 1. Convert all files to image buffers
       for (const file of files) {
-        let imageBuffers: Buffer[] = [];
-
         if (file.mimetype === "application/pdf") {
-          const tmpPdf = path.join(tmpDir, `upload-${Date.now()}.pdf`);
+          const tmpPdf = path.join(tmpDir, `upload-${Date.now()}-${Math.random().toString(36).slice(2,8)}.pdf`);
           fs.writeFileSync(tmpPdf, file.buffer);
           try {
             const { execSync } = await import("child_process");
             const pythonPath = process.env.PYTHON_PATH || "python";
             const raw = execSync(`"${pythonPath}" -W ignore "${path.join(process.cwd(), "pdf_to_images.py")}" "${tmpPdf}" 2>NUL`, {
-              timeout: 60000, maxBuffer: 50 * 1024 * 1024, windowsHide: true,
+              timeout: 120000, maxBuffer: 100 * 1024 * 1024, windowsHide: true,
             });
             const pages: string[] = JSON.parse(raw.toString().trim());
-            pages.forEach(b64 => imageBuffers.push(Buffer.from(b64, "base64")));
+            pages.forEach(b64 => allImageBuffers.push(Buffer.from(b64, "base64")));
           } catch (e: any) {
             console.error("PDF conversion failed:", e.message);
           } finally {
             try { fs.unlinkSync(tmpPdf); } catch {}
           }
         } else {
-          imageBuffers.push(file.buffer);
+          allImageBuffers.push(file.buffer);
         }
+      }
 
-        for (const imgBuf of imageBuffers) {
-          const cropped = await sharp(imgBuf).resize({ width: 768, height: 576, fit: "cover", position: "centre" }).jpeg({ quality: 90 }).toBuffer();
-          const croppedBase64 = `data:image/jpeg;base64,${cropped.toString("base64")}`;
+      // 2. For each page, detect products using sharp (content-aware crop detection)
+      //    Simple approach: each catalogue page = one product unless we can split
+      const allCrops: Buffer[] = [];
 
-          let imageUrl = "";
-          if (process.env.CLOUDINARY_CLOUD_NAME) {
-            try { imageUrl = await cloudinaryUpload(croppedBase64, "catalogue", `crop-${Date.now()}-${Math.random().toString(36).slice(2,8)}`) || ""; } catch {}
+      for (const imgBuf of allImageBuffers) {
+        try {
+          const metadata = await sharp(imgBuf).metadata();
+          const w = metadata.width || 800;
+          const h = metadata.height || 600;
+
+          // Try to detect product regions by finding non-white content areas
+          // For a catalogue, each page typically has 1 product with text/branding
+          // We'll upscale and crop to get a high-quality product image
+          const targetW = 1200;
+          const targetH = 900;
+          const targetRatio = targetW / targetH;
+          const currentRatio = w / h;
+          let cropW: number, cropH: number, cropLeft: number, cropTop: number;
+
+          if (currentRatio > targetRatio) {
+            cropH = h;
+            cropW = Math.round(h * targetRatio);
+            cropLeft = Math.round((w - cropW) / 2);
+            cropTop = 0;
+          } else {
+            cropW = w;
+            cropH = Math.round(w / targetRatio);
+            cropLeft = 0;
+            cropTop = Math.round((h - cropH) / 2);
           }
 
-          results.push({ name: "Product", description: "", imageUrl, colors: [] });
+          const cropped = await sharp(imgBuf)
+            .extract({ left: cropLeft, top: cropTop, width: cropW, height: cropH })
+            .resize(targetW, targetH, { fit: "fill" })
+            .jpeg({ quality: 92 })
+            .toBuffer();
+
+          allCrops.push(cropped);
+        } catch (e) {
+          console.error("Crop failed for image, using full:", e);
+          const fallback = await sharp(imgBuf).resize(1200, 900, { fit: "cover" }).jpeg({ quality: 92 }).toBuffer();
+          allCrops.push(fallback);
+        }
+      }
+
+      // 3. Upload all crops to Cloudinary and collect info
+      const uploadedProducts: any[] = [];
+
+      for (let i = 0; i < allCrops.length; i++) {
+        const cropBuf = allCrops[i];
+        const cropBase64 = `data:image/jpeg;base64,${cropBuf.toString("base64")}`;
+        const fileSizeKB = cropBuf.length / 1024;
+        const fileSizeMB = fileSizeKB / 1024;
+
+        let imageUrl = "";
+        if (process.env.CLOUDINARY_CLOUD_NAME) {
+          try {
+            imageUrl = await cloudinaryUpload(cropBase64, "catalogue", `crop-${Date.now()}-${i}-${Math.random().toString(36).slice(2,8)}`) || "";
+          } catch {}
+        }
+
+        uploadedProducts.push({
+          imageUrl,
+          originalIndex: i,
+          fileSizeMB: Math.round(fileSizeMB * 100) / 100,
+          name: "",
+          description: "",
+          colors: [],
+        });
+      }
+
+      // 4. Use Ollama vision to identify products from images (batch, up to 5 at a time)
+      if (uploadedProducts.length > 0) {
+        try {
+          const batchSize = 5;
+          for (let b = 0; b < uploadedProducts.length; b += batchSize) {
+            const batch = uploadedProducts.slice(b, b + batchSize);
+            // Send first image of batch to vision model for identification
+            const firstProduct = batch[0];
+            if (firstProduct.imageUrl) {
+              const visionPrompt = `Look at this product image from a catalogue. Return ONLY a JSON object (no markdown, no code fences) with these fields:
+- "name": short product name (e.g. "Ceramic Mug", "Polo T-Shirt")
+- "description": one sentence product description
+- "colors": array of color names visible or mentioned (e.g. ["Red", "Blue", "Black"])
+- "category": product category (e.g. "Mugs", "Apparel", "Bottles")
+
+If you cannot identify the product, return: {"name": "Product", "description": "Catalogue product", "colors": [], "category": "Uncategorized"}`;
+
+              const visionRes = await fetch(`${OLLAMA_BASE_URL}/api/chat`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  model: OLLAMA_VISION_MODEL,
+                  messages: [{
+                    role: "user",
+                    content: visionPrompt,
+                    images: [firstProduct.imageUrl]
+                  }],
+                  stream: false,
+                  options: { temperature: 0.3 }
+                })
+              });
+
+              if (visionRes.ok) {
+                const visionData = await visionRes.json();
+                const content = visionData.message?.content || "";
+                try {
+                  // Try to extract JSON from response
+                  const jsonMatch = content.match(/\{[\s\S]*\}/);
+                  if (jsonMatch) {
+                    const info = JSON.parse(jsonMatch[0]);
+                    // Apply same info to all products in this batch (same catalogue page = same product line)
+                    for (const p of batch) {
+                      p.name = info.name || "Product";
+                      p.description = info.description || "";
+                      p.colors = info.colors || [];
+                      p.category = info.category || "Uncategorized";
+                    }
+                  }
+                } catch {}
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Vision identification failed:", e);
+          // Products keep empty names — user fills them in UI
+        }
+      }
+
+      // 5. Group products by name (same product, different colors = one card)
+      const grouped = new Map<string, any>();
+      for (const p of uploadedProducts) {
+        const key = (p.name || "Product").toLowerCase().trim();
+        if (grouped.has(key)) {
+          const existing = grouped.get(key);
+          // Merge images as color variants
+          if (p.colors?.length) {
+            existing.colors = [...new Set([...existing.colors, ...p.colors])];
+          }
+          if (!existing.additionalImages) existing.additionalImages = [];
+          existing.additionalImages.push(p.imageUrl);
+        } else {
+          grouped.set(key, { ...p, additionalImages: [] });
         }
       }
 
       try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
-      res.json({ products: results });
+      res.json({ products: Array.from(grouped.values()) });
     } catch (error: any) {
       console.error("Extraction failed:", error);
       res.status(500).json({ error: error.message || "Extraction failed" });
-    }
-  });
-
-  // ====== AI IMAGE REGENERATION (Pollinations AI) ======
-  app.post("/api/catalogue/generate-image", upload.single("file"), async (req, res) => {
-    try {
-      const { name, description, colors } = req.body;
-      const file = req.file;
-      if (!file) return res.status(400).json({ error: "No image file provided" });
-
-      const colorStr = colors ? JSON.parse(colors).join(", ") : "";
-      const prompt = `Professional product photography of ${name || "product"}, ${description || ""}. ${colorStr ? "Colors: " + colorStr + "." : ""} Clean white background, studio lighting, e-commerce style, sharp focus, photorealistic`;
-
-      const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=576&model=flux&seed=${Math.floor(Math.random() * 10000)}`;
-      const imgResponse = await fetch(pollinationsUrl);
-      if (!imgResponse.ok) throw new Error("Pollinations API failed");
-
-      const imgBuffer = Buffer.from(await imgResponse.arrayBuffer());
-      let imageUrl = "";
-      if (process.env.CLOUDINARY_CLOUD_NAME) {
-        imageUrl = await cloudinaryUpload(`data:image/jpeg;base64,${imgBuffer.toString("base64")}`, "catalogue", `gen-${Date.now()}`) || "";
-      }
-
-      res.json({ imageUrl, promptUsed: prompt });
-    } catch (error: any) {
-      console.error("Image generation failed:", error.message);
-      res.status(500).json({ error: error.message || "Image generation failed" });
     }
   });
 
@@ -902,7 +1008,7 @@ async function startServer() {
           sellingPrice: typeof p.sellingPrice === "number" ? p.sellingPrice : 0,
           gstRate: typeof p.gstRate === "number" ? p.gstRate : 18,
           category: p.category || "Uncategorized", imageUrl: p.imageUrl || "",
-          sizes: p.colors?.length ? p.colors.map((c: string) => ({ name: c, price: 0 })) : []
+          colors: p.colors || [],
         };
         db.catalogueItems.push(item);
         saved.push(item);

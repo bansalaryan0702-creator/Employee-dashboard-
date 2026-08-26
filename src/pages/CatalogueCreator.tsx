@@ -17,6 +17,7 @@ type CatalogueItem = {
   category: string;
   imageUrl?: string;
   sizes?: string[];
+  colors?: string[];
 };
 
 interface CatalogueCreatorProps {
@@ -64,7 +65,6 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
   const [showAiPreview, setShowAiPreview] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiEditingIndex, setAiEditingIndex] = useState<number | null>(null);
-  const [aiGeneratingImage, setAiGeneratingImage] = useState<number | null>(null);
 
   
   const toggleCart = (item: CatalogueItem) => {
@@ -395,8 +395,8 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
       name: p.name || 'Untitled',
       description: p.description || '',
       imageUrl: p.imageUrl || '',
-      brandName: '',
-      category: 'Uncategorized',
+      brandName: p.brandName || '',
+      category: p.category || 'Uncategorized',
       price: 0,
       sellingPrice: 0,
       purchasePrice: 0,
@@ -417,7 +417,6 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
       }
 
       const data = await response.json();
-      // Refresh catalogue
       const catRes = await fetch('/api/catalogue-items');
       if (catRes.ok) {
         const allItems = await catRes.json();
@@ -433,43 +432,17 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
     }
   };
 
-  const handleGenerateImage = async (index: number) => {
-    const product = aiExtractedProducts[index];
-    if (!product.imageUrl) return;
+  const handleRemoveAiColor = (prodIdx: number, colorIdx: number) => {
+    setAiExtractedProducts(prev => prev.map((p, i) =>
+      i === prodIdx ? { ...p, colors: p.colors.filter((_: string, j: number) => j !== colorIdx) } : p
+    ));
+  };
 
-    setAiGeneratingImage(index);
-    setAiError(null);
-
-    try {
-      // Fetch the image as a blob
-      const imgResponse = await fetch(product.imageUrl);
-      const blob = await imgResponse.blob();
-
-      const formDataUpload = new FormData();
-      formDataUpload.append("file", blob, `product-${Date.now()}.webp`);
-      formDataUpload.append("name", product.name || "product");
-      formDataUpload.append("description", product.description || "");
-      formDataUpload.append("colors", JSON.stringify(product.colors || []));
-
-      const response = await fetch('/api/catalogue/generate-image', {
-        method: 'POST',
-        body: formDataUpload,
-      });
-
-      if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.error || 'Image generation failed');
-      }
-
-      const data = await response.json();
-      setAiExtractedProducts(prev => prev.map((p, i) =>
-        i === index ? { ...p, imageUrl: data.imageUrl, generated: true } : p
-      ));
-    } catch (err: any) {
-      setAiError(`Image generation failed: ${err.message}`);
-    } finally {
-      setAiGeneratingImage(null);
-    }
+  const handleAddAiColor = (prodIdx: number, color: string) => {
+    if (!color.trim()) return;
+    setAiExtractedProducts(prev => prev.map((p, i) =>
+      i === prodIdx ? { ...p, colors: [...new Set([...p.colors, color.trim()])] } : p
+    ));
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -674,6 +647,13 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
                   </span>
                 </div>
                 <p className="text-slate-500 text-sm mb-4 line-clamp-3 whitespace-pre-line flex-grow">{item.description}</p>
+                {item.colors && item.colors.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {item.colors.map((c: string, ci: number) => (
+                      <span key={ci} className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full">{c}</span>
+                    ))}
+                  </div>
+                )}
                 <div className="text-sm font-semibold text-slate-900 flex flex-col gap-1 mt-auto">
                   <div className="flex items-center text-emerald-600">
                     <span className="text-xs text-slate-400 mr-1">Sell:</span>
@@ -1117,6 +1097,13 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
                   </span>
                 </div>
                 <p className="text-slate-500 text-sm mb-4 line-clamp-3 whitespace-pre-line flex-grow">{item.description}</p>
+                {item.colors && item.colors.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {item.colors.map((c: string, ci: number) => (
+                      <span key={ci} className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full">{c}</span>
+                    ))}
+                  </div>
+                )}
                 <div className="space-y-1 mt-auto pt-2 border-t border-slate-100">
                   <div className="flex justify-between text-xs text-slate-500">
                     <span>Purchase Price:</span>
@@ -1461,15 +1448,15 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
 
       {/* AI Extract Preview Modal */}
       {showAiPreview && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-bl-sm">
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-purple-50 to-indigo-50 shrink-0">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                   <ScanSearch className="w-5 h-5 text-purple-600" />
-                  AI Extracted Products ({aiExtractedProducts.length})
+                  Extracted Products ({aiExtractedProducts.length})
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">Review and edit before saving to catalogue</p>
+                <p className="text-sm text-slate-500 mt-1">Edit names, descriptions and colors, then save</p>
               </div>
               <button onClick={() => { setShowAiPreview(false); setAiExtractedProducts([]); }} className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-200 transition-colors">
                 <X size={20} />
@@ -1500,24 +1487,10 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
 
                     <div className="flex gap-3">
                       {product.imageUrl && (
-                        <div className="w-28 shrink-0 space-y-2">
+                        <div className="w-28 shrink-0">
                           <div className="w-28 h-28 rounded-lg overflow-hidden bg-slate-200">
                             <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                           </div>
-                          {product.generated && (
-                            <span className="block text-[10px] text-green-600 font-medium text-center">AI Generated</span>
-                          )}
-                          <button
-                            onClick={() => handleGenerateImage(index)}
-                            disabled={aiGeneratingImage === index}
-                            className="w-full flex items-center justify-center gap-1 px-2 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-md text-[11px] font-semibold hover:from-purple-600 hover:to-indigo-600 transition-all disabled:opacity-50"
-                          >
-                            {aiGeneratingImage === index ? (
-                              <><Loader2 size={12} className="animate-spin" /> Generating...</>
-                            ) : (
-                              <><Sparkles size={12} /> Regenerate</>
-                            )}
-                          </button>
                         </div>
                       )}
                       <div className="flex-1 space-y-2">
@@ -1528,6 +1501,7 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
                             value={product.name}
                             onChange={(e) => handleAiEditProduct(index, 'name', e.target.value)}
                             className="w-full p-1.5 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white"
+                            placeholder="Product name"
                           />
                         </div>
                         <div>
@@ -1535,16 +1509,39 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
                           <textarea
                             value={product.description}
                             onChange={(e) => handleAiEditProduct(index, 'description', e.target.value)}
-                            className="w-full p-1.5 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white min-h-[60px]"
+                            className="w-full p-1.5 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white min-h-[50px]"
                             rows={2}
+                            placeholder="Short description"
                           />
                         </div>
-                        {product.colors && product.colors.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            <span className="text-[11px] font-semibold text-slate-400 uppercase mr-1">Colors:</span>
-                            {product.colors.map((c: string) => (
-                              <span key={c} className="bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5 rounded-full">{c}</span>
+                        <div>
+                          <label className="text-[11px] font-semibold text-slate-400 uppercase">Colors</label>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {(product.colors || []).map((c: string, ci: number) => (
+                              <span key={ci} className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5 rounded-full">
+                                {c}
+                                <button onClick={() => handleRemoveAiColor(index, ci)} className="text-purple-400 hover:text-purple-700">×</button>
+                              </span>
                             ))}
+                          </div>
+                          <div className="flex gap-1 mt-1">
+                            <input
+                              type="text"
+                              placeholder="Add color"
+                              className="flex-1 p-1 border border-slate-200 rounded text-xs focus:outline-none focus:ring-1 focus:ring-purple-400"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  handleAddAiColor(index, (e.target as HTMLInputElement).value);
+                                  (e.target as HTMLInputElement).value = '';
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                        {product.additionalImages && product.additionalImages.length > 0 && (
+                          <div className="flex gap-1 mt-1">
+                            <span className="text-[10px] text-slate-400">+{product.additionalImages.length} more image(s)</span>
                           </div>
                         )}
                       </div>

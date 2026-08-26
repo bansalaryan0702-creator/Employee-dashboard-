@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Search, Edit, Trash2, Plus, Image, Box, Tag, IndianRupee, X, Upload, Loader2, Sparkles, FileDown, ShoppingCart, CheckCircle2 } from 'lucide-react';
+import { LogOut, Search, Edit, Trash2, Plus, Image, Box, Tag, IndianRupee, X, Upload, Loader2, Sparkles, FileDown, ShoppingCart, CheckCircle2, ScanSearch } from 'lucide-react';
 import { downloadCartPdf } from '../utils/generatePdf';
 import PrintFieldLogo from '../components/PrintFieldLogo';
 import { v4 as uuidv4 } from 'uuid';
@@ -57,6 +57,13 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
   const [bulkQueue, setBulkQueue] = useState<string[]>([]);
   const [bulkTotal, setBulkTotal] = useState(0);
   const bulkFileInputRef = useRef<HTMLInputElement>(null);
+  const aiExtractInputRef = useRef<HTMLInputElement>(null);
+
+  const [aiExtracting, setAiExtracting] = useState(false);
+  const [aiExtractedProducts, setAiExtractedProducts] = useState<any[]>([]);
+  const [showAiPreview, setShowAiPreview] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiEditingIndex, setAiEditingIndex] = useState<number | null>(null);
 
   
   const toggleCart = (item: CatalogueItem) => {
@@ -339,6 +346,92 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
     }
   };
 
+  const handleAiExtract = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setAiExtracting(true);
+    setAiError(null);
+    setAiExtractedProducts([]);
+
+    try {
+      const formDataUpload = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formDataUpload.append("files", files[i]);
+      }
+
+      const response = await fetch('/api/catalogue/ai-extract', {
+        method: 'POST',
+        body: formDataUpload,
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'AI extraction failed');
+      }
+
+      const data = await response.json();
+      setAiExtractedProducts(data.products || []);
+      setShowAiPreview(true);
+    } catch (err: any) {
+      setAiError(err.message || 'Failed to extract products');
+    } finally {
+      setAiExtracting(false);
+      if (aiExtractInputRef.current) aiExtractInputRef.current.value = '';
+    }
+  };
+
+  const handleAiEditProduct = (index: number, field: string, value: string) => {
+    setAiExtractedProducts(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
+  };
+
+  const handleAiRemoveProduct = (index: number) => {
+    setAiExtractedProducts(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAiSaveAll = async () => {
+    const productsToSave = aiExtractedProducts.map(p => ({
+      name: p.name || 'Untitled',
+      description: p.description || '',
+      imageUrl: p.imageUrl || '',
+      brandName: '',
+      category: 'Uncategorized',
+      price: 0,
+      sellingPrice: 0,
+      purchasePrice: 0,
+      gstRate: 18,
+      colors: p.colors || [],
+    }));
+
+    try {
+      const response = await fetch('/api/catalogue/ai-save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ products: productsToSave }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Failed to save products');
+      }
+
+      const data = await response.json();
+      // Refresh catalogue
+      const catRes = await fetch('/api/catalogue-items');
+      if (catRes.ok) {
+        const allItems = await catRes.json();
+        setItems(allItems);
+        localStorage.setItem('catalogue_items', JSON.stringify(allItems));
+      }
+
+      setShowAiPreview(false);
+      setAiExtractedProducts([]);
+      alert(`Successfully saved ${data.count} products to catalogue!`);
+    } catch (err: any) {
+      setAiError(err.message || 'Failed to save products');
+    }
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -492,6 +585,22 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
             >
               <Image className="w-4 h-4" />
               {isUploading ? 'Uploading...' : 'Bulk Add Images'}
+            </button>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              className="hidden"
+              ref={aiExtractInputRef}
+              onChange={handleAiExtract}
+            />
+            <button
+              onClick={() => aiExtractInputRef.current?.click()}
+              className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors whitespace-nowrap disabled:bg-purple-400"
+              disabled={aiExtracting}
+            >
+              {aiExtracting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ScanSearch className="w-4 h-4" />}
+              {aiExtracting ? 'Extracting...' : 'AI Extract Catalogue'}
             </button>
           </div>
         </div>
@@ -920,6 +1029,22 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
               <Image className="w-4 h-4" />
               {isUploading ? 'Uploading...' : 'Bulk Add Images'}
             </button>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              className="hidden"
+              ref={aiExtractInputRef}
+              onChange={handleAiExtract}
+            />
+            <button
+              onClick={() => aiExtractInputRef.current?.click()}
+              className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors whitespace-nowrap disabled:bg-purple-400"
+              disabled={aiExtracting}
+            >
+              {aiExtracting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ScanSearch className="w-4 h-4" />}
+              {aiExtracting ? 'Extracting...' : 'AI Extract Catalogue'}
+            </button>
           </div>
         </div>
 
@@ -1288,6 +1413,105 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
               >
                 Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* AI Extract Preview Modal */}
+      {showAiPreview && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-purple-50 to-indigo-50 shrink-0">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <ScanSearch className="w-5 h-5 text-purple-600" />
+                  AI Extracted Products ({aiExtractedProducts.length})
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">Review and edit before saving to catalogue</p>
+              </div>
+              <button onClick={() => { setShowAiPreview(false); setAiExtractedProducts([]); }} className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-200 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 overflow-y-auto flex-1">
+              {aiError && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">{aiError}</div>
+              )}
+
+              {aiExtractedProducts.length === 0 && !aiError && (
+                <div className="text-center py-12 text-slate-400">
+                  <ScanSearch className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                  <p>No products detected. Try uploading clearer images.</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {aiExtractedProducts.map((product, index) => (
+                  <div key={index} className="border border-slate-200 rounded-xl p-4 bg-slate-50 relative group">
+                    <button
+                      onClick={() => handleAiRemoveProduct(index)}
+                      className="absolute top-2 right-2 p-1 bg-red-100 text-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200"
+                    >
+                      <X size={14} />
+                    </button>
+
+                    <div className="flex gap-3">
+                      {product.imageUrl && (
+                        <div className="w-24 h-24 rounded-lg overflow-hidden bg-slate-200 shrink-0">
+                          <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="flex-1 space-y-2">
+                        <div>
+                          <label className="text-[11px] font-semibold text-slate-400 uppercase">Name</label>
+                          <input
+                            type="text"
+                            value={product.name}
+                            onChange={(e) => handleAiEditProduct(index, 'name', e.target.value)}
+                            className="w-full p-1.5 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-slate-400 uppercase">Description</label>
+                          <textarea
+                            value={product.description}
+                            onChange={(e) => handleAiEditProduct(index, 'description', e.target.value)}
+                            className="w-full p-1.5 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white min-h-[60px]"
+                            rows={2}
+                          />
+                        </div>
+                        {product.colors && product.colors.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            <span className="text-[11px] font-semibold text-slate-400 uppercase mr-1">Colors:</span>
+                            {product.colors.map((c: string) => (
+                              <span key={c} className="bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5 rounded-full">{c}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+              <button
+                onClick={() => { setShowAiPreview(false); setAiExtractedProducts([]); }}
+                className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAiSaveAll}
+                disabled={aiExtractedProducts.length === 0}
+                className="flex items-center gap-2 px-5 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                Save All ({aiExtractedProducts.length}) to Catalogue
               </button>
             </div>
           </div>

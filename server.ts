@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import express from "express";
 import path from "path";
 import fs from "fs";
+import sharp from "sharp";
 import { v4 as uuidv4 } from 'uuid';
 import { createServer as createViteServer } from "vite";
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
@@ -737,7 +738,8 @@ async function startServer() {
         sellingPrice: typeof item.sellingPrice === "number" ? item.sellingPrice : 0,
         gstRate: typeof item.gstRate === "number" ? item.gstRate : 0,
         category: item.category || "Uncategorized",
-        imageUrl: item.imageUrl || ""
+        imageUrl: item.imageUrl || "",
+        sizes: Array.isArray(item.sizes) ? item.sizes : []
       };
       db.catalogueItems.push(newItem);
       await writeDB(db);
@@ -769,7 +771,8 @@ async function startServer() {
         sellingPrice: updates.sellingPrice !== undefined ? (typeof updates.sellingPrice === "number" ? updates.sellingPrice : 0) : db.catalogueItems[index].sellingPrice,
         gstRate: updates.gstRate !== undefined ? (typeof updates.gstRate === "number" ? updates.gstRate : 0) : db.catalogueItems[index].gstRate,
         category: updates.category !== undefined ? updates.category : db.catalogueItems[index].category,
-        imageUrl: updates.imageUrl !== undefined ? updates.imageUrl : db.catalogueItems[index].imageUrl
+        imageUrl: updates.imageUrl !== undefined ? updates.imageUrl : db.catalogueItems[index].imageUrl,
+        sizes: updates.sizes !== undefined ? (Array.isArray(updates.sizes) ? updates.sizes : db.catalogueItems[index].sizes || []) : db.catalogueItems[index].sizes || []
       };
       await writeDB(db);
       res.json(db.catalogueItems[index]);
@@ -791,6 +794,134 @@ async function startServer() {
     } catch (error: any) {
       console.error("Failed to delete catalogue item:", error);
       res.status(500).json({ error: error.message || "Failed to delete catalogue item" });
+    }
+  });
+
+  // ====== AI CATALOGUE IMAGE EXTRACTION ======
+  // Upload a catalogue page/image and AI extracts individual products
+  app.post("/api/catalogue/ai-extract", upload.array("files", 20), async (req, res) => {
+    try {
+      const files = req.files as Express.Multer.File[];
+      if (!files || files.length === 0) {
+        return res.status(400).json({ error: "No files uploaded" });
+      }
+
+      const results: any[] = [];
+
+      for (const file of files) {
+        const base64 = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+
+        // Use Ollama vision to analyze the image and identify products
+        let productInfo: any = { name: "", description: "", colors: [] };
+        try {
+          const prompt = `Analyze this product image. Respond ONLY with valid JSON (no markdown, no code fences):
+{
+  "name": "short product name (2-4 words)",
+  "description": "one sentence product description",
+  "colors": ["list of color variants visible or mentioned"]
+}
+Do NOT include any text outside the JSON.`;
+
+          const response = await fetch(`${OLLAMA_BASE_URL}/api/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: OLLAMA_MODEL,
+              messages: [{
+                role: "user",
+                content: prompt,
+                images: [base64.split(",")[1]]
+              }],
+              stream: false,
+              options: { temperature: 0.3 }
+            })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const content = data.message?.content?.trim() || "";
+            // Extract JSON from response
+            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              productInfo = JSON.parse(jsonMatch[0]);
+            }
+          }
+        } catch (e) {
+          console.log("AI analysis failed for image, using defaults");
+        }
+
+        // Crop image to 4:3 ratio (center crop)
+        const processedBuffer = await sharp(file.buffer)
+          .resize({
+            width: 800,
+            height: 600,
+            fit: "cover",
+            position: "centre"
+          })
+          .toBuffer();
+
+        const processedBase64 = `data:image/jpeg;base64,${processedBuffer.toString("base64")}`;
+
+        // Upload to Cloudinary
+        let imageUrl = "";
+        if (process.env.CLOUDINARY_CLOUD_NAME) {
+          try {
+            imageUrl = await cloudinaryUpload(processedBase64, "catalogue", `product-${Date.now()}-${Math.random().toString(36).slice(2)}`) || "";
+          } catch (e: any) {
+            console.error("Cloudinary upload failed:", e.message);
+          }
+        }
+
+        results.push({
+          name: productInfo.name || "Untitled Product",
+          description: productInfo.description || "",
+          imageUrl,
+          colors: productInfo.colors || [],
+        });
+      }
+
+      res.json({ products: results });
+    } catch (error: any) {
+      console.error("AI extraction failed:", error);
+      res.status(500).json({ error: error.message || "AI extraction failed" });
+    }
+  });
+
+  // Save extracted products as catalogue items
+  app.post("/api/catalogue/ai-save", async (req, res) => {
+    try {
+      const { products } = req.body;
+      if (!products || !Array.isArray(products)) {
+        return res.status(400).json({ error: "Products array required" });
+      }
+
+      const db = await readDB();
+      if (!db.catalogueItems) db.catalogueItems = [];
+
+      const saved = [];
+      for (const p of products) {
+        const item = {
+          id: uuidv4(),
+          brandName: p.brandName || "",
+          name: p.name || "Untitled",
+          description: p.description || "",
+          price: typeof p.price === "number" ? p.price : 0,
+          purchasePrice: typeof p.purchasePrice === "number" ? p.purchasePrice : 0,
+          sellingPrice: typeof p.sellingPrice === "number" ? p.sellingPrice : 0,
+          gstRate: typeof p.gstRate === "number" ? p.gstRate : 18,
+          category: p.category || "Uncategorized",
+          imageUrl: p.imageUrl || "",
+          sizes: p.colors?.length ? p.colors.map((c: string) => ({ name: c, price: 0 })) : []
+        };
+        db.catalogueItems.push(item);
+        saved.push(item);
+      }
+
+      await writeDB(db);
+      res.json({ saved, count: saved.length });
+    } catch (error: any) {
+      console.error("Failed to save extracted products:", error);
+      res.status(500).json({ error: error.message || "Failed to save products" });
     }
   });
 

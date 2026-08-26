@@ -485,7 +485,7 @@ export async function downloadCartPdf(cartItems: any[], user: any, showBrandName
       pageNum: currentPageNum
     });
 
-    const itemsPerPage = 2;
+    const itemsPerPage = 1; // 1 product per page for professional layout
 
     for (let i = 0; i < itemsInCategory.length; i += itemsPerPage) {
       const chunk = itemsInCategory.slice(i, i + itemsPerPage);
@@ -582,103 +582,237 @@ export async function downloadCartPdf(cartItems: any[], user: any, showBrandName
   doc.text('Page 2', 195, 281, { align: 'right' });
 
   // ==========================================
-  // DYNAMIC CATALOGUE PAGES
+  // DYNAMIC CATALOGUE PAGES - PROFESSIONAL LAYOUT
   // ==========================================
-        catalogPages.forEach((page) => {
-    doc.addPage();
-    drawPageHeaderFooter(page.pageNum, page.categoryTitle);
+  // Color palette matching the reference design
+  const WARM_BG = [245, 235, 220];       // warm beige/peach background
+  const DARK_ACCENT = [30, 30, 30];      // near black for text
+  const ORANGE_ACCENT = [210, 150, 90];  // warm orange/tan accent
+  const WHITE = [255, 255, 255];
+  const LIGHT_GRAY = [240, 240, 240];
 
-    const is2PerPage = page.layout === '2-per-page';
+  // Helper: draw rounded rect
+  const drawRoundedRect = (x: number, y: number, w: number, h: number, r: number, style: string = 'F') => {
+    doc.roundedRect(x, y, w, h, r, r, style);
+  };
 
-    page.items.forEach((item, index) => {
-      let cx, cy, imgContWidth, imgContHeight, textWidth;
-
-      if (is2PerPage) {
-        // Up and down layout, centered
-        imgContWidth = 120;
-        imgContHeight = 90; // 4:3 ratio
-        textWidth = 120;
-        cx = (210 - imgContWidth) / 2; // Center horizontally -> 45
-        cy = index === 0 ? 25 : 150;
-      } else {
-        // 2x2 grid
-        const colXs = [15, 110];
-        const rowYs = [30, 150];
-        const col = index % 2;
-        const row = Math.floor(index / 2);
-        cx = colXs[col];
-        cy = rowYs[row];
-        imgContWidth = 85;
-        imgContHeight = 64; // 4:3 ratio
-        textWidth = 85;
-      }
-
-      // Render custom image if available, otherwise draw placeholder
-      const productImg = productImagesMap[item.id];
-      if (productImg) {
-        try {
-          // Fit the image within imgContWidth x imgContHeight preserving aspect ratio
-          const imgRatio = (productImg.width || 1) / (productImg.height || 1);
-          const targetRatio = imgContWidth / imgContHeight;
-          let rw = imgContWidth;
-          let rh = imgContHeight;
-          
-          if (imgRatio > targetRatio) {
-            rh = rw / imgRatio;
-          } else {
-            rw = rh * imgRatio;
-          }
-          const rx = cx + (imgContWidth - rw) / 2;
-          const ry = cy + (imgContHeight - rh) / 2;
-          
-          doc.addImage(productImg, 'JPEG', rx, ry, rw, rh, undefined, 'MEDIUM');
-        } catch (e) {
-          console.log("Error adding product image", e);
-          drawCameraPlaceholder(cx + imgContWidth / 2, cy + imgContHeight / 2, item.name);
-        }
-      } else {
-        drawCameraPlaceholder(cx + imgContWidth / 2, cy + imgContHeight / 2, item.name);
-      }
-
-      const contentYOffset = cy + imgContHeight + 7;
-
-      // Product Title
-      doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(is2PerPage ? 13 : 11);
-      doc.setTextColor(TEXT_DARK[0], TEXT_DARK[1], TEXT_DARK[2]);
-      const displayName = showBrandName && item.brandName ? `${item.brandName} ${item.name}` : item.name;
-      const titleLines = doc.splitTextToSize(displayName || '', textWidth);
-      doc.text(titleLines[0], cx, contentYOffset);
-
-      // Product Description
-      doc.setFont('Helvetica', 'normal');
-      doc.setFontSize(is2PerPage ? 9 : 7.5);
-      doc.setTextColor(TEXT_MUTED[0], TEXT_MUTED[1], TEXT_MUTED[2]);
-      
-      const descLines = doc.splitTextToSize(item.description || '', textWidth);
-      const linesToShow = descLines.slice(0, is2PerPage ? 3 : 2);
-      if (descLines.length > linesToShow.length) {
-        linesToShow[linesToShow.length - 1] = linesToShow[linesToShow.length - 1].substring(0, Math.max(0, linesToShow[linesToShow.length - 1].length - 3)) + '...';
-      }
-      
-      let textY = contentYOffset + (is2PerPage ? 5.5 : 4.5);
-      linesToShow.forEach((line) => {
-        doc.text(line, cx, textY);
-        textY += (is2PerPage ? 4.5 : 3.8);
-      });
-
-      // Price Text
-      doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(is2PerPage ? 11 : 9);
-      doc.setTextColor(107, 33, 168); // purple-800
-      
-      const priceToUse = typeof item.sellingPrice === 'number' ? item.sellingPrice : (item.price || 0);
-      let priceStr = `Price: Rs. ${Number(priceToUse).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      if (item.gstRate && Number(item.gstRate) > 0) {
-        priceStr += ` + ${item.gstRate}% GST`;
-      }
-      doc.text(priceStr, cx, textY + 2);
+  // Helper: draw printing method icon (simple circle with text)
+  const drawPrintMethodIcon = (cx: number, cy: number, label: string) => {
+    // Circle
+    doc.setFillColor(WHITE[0], WHITE[1], WHITE[2]);
+    doc.setDrawColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    doc.setLineWidth(0.4);
+    doc.circle(cx, cy, 6, 'FD');
+    // Label below
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(5);
+    doc.setTextColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    const lines = doc.splitTextToSize(label, 14);
+    lines.forEach((line: string, i: number) => {
+      doc.text(line, cx, cy + 8 + (i * 3), { align: 'center' });
     });
+  };
+
+  // Helper: draw feature icon (rounded square with label)
+  const drawFeatureIcon = (cx: number, cy: number, label: string) => {
+    doc.setFillColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    doc.roundedRect(cx - 8, cy - 6, 16, 12, 2, 2, 'F');
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(5);
+    doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+    const lines = doc.splitTextToSize(label, 12);
+    lines.forEach((line: string, i: number) => {
+      doc.text(line, cx, cy - 1 + (i * 3.5), { align: 'center' });
+    });
+  };
+
+  catalogPages.forEach((page) => {
+    doc.addPage();
+
+    const item = page.items[0]; // First item on page (1 per page now)
+    if (!item) return;
+
+    // ===== FULL PAGE BACKGROUND =====
+    doc.setFillColor(WARM_BG[0], WARM_BG[1], WARM_BG[2]);
+    doc.rect(0, 0, 210, 297, 'F');
+
+    // ===== LEFT SIDE - VERTICAL CATEGORY TEXT =====
+    doc.setFillColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    doc.rect(0, 0, 18, 297, 'F');
+
+    // Vertical category text
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+    const catText = page.categoryTitle || 'PRODUCT';
+    // Draw each letter vertically
+    for (let i = 0; i < catText.length; i++) {
+      doc.text(catText[i], 9, 100 + (i * 8), { align: 'center', angle: 90 });
+    }
+
+    // ===== TOP RIGHT - LOGO + PRODUCT NAME =====
+    // Logo
+    if (logoImg) {
+      const maxW = 30;
+      const maxH = 12;
+      const ratio = logoImg.width && logoImg.height ? logoImg.width / logoImg.height : 1.275;
+      let rW = maxW;
+      let rH = rW / ratio;
+      if (rH > maxH) { rH = maxH; rW = rH * ratio; }
+      try {
+        doc.addImage(logoImg, 'PNG', 25, 10, rW, rH, undefined, 'MEDIUM');
+      } catch (e) {}
+    }
+
+    // Product Name (large bold)
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(28);
+    doc.setTextColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    const displayName = showBrandName && item.brandName ? item.brandName : (item.name || 'PRODUCT').toUpperCase();
+    doc.text(displayName.substring(0, 25), 130, 22);
+
+    // Subtitle
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    doc.text(item.name || 'Product Name', 130, 30);
+
+    // ===== MAIN PRODUCT IMAGE (large, centered) =====
+    const imgX = 25;
+    const imgY = 42;
+    const imgW = 100;
+    const imgH = 130;
+
+    // White background for image area
+    doc.setFillColor(WHITE[0], WHITE[1], WHITE[2]);
+    doc.roundedRect(imgX, imgY, imgW, imgH, 3, 3, 'F');
+
+    const productImg = productImagesMap[item.id];
+    if (productImg) {
+      try {
+        const imgRatio = (productImg.width || 1) / (productImg.height || 1);
+        const targetRatio = imgW / imgH;
+        let rw = imgW - 4;
+        let rh = imgH - 4;
+        if (imgRatio > targetRatio) {
+          rh = rw / imgRatio;
+        } else {
+          rw = rh * imgRatio;
+        }
+        const rx = imgX + (imgW - rw) / 2;
+        const ry = imgY + (imgH - rh) / 2;
+        doc.addImage(productImg, 'JPEG', rx, ry, rw, rh, undefined, 'MEDIUM');
+      } catch (e) {
+        drawCameraPlaceholder(imgX + imgW / 2, imgY + imgH / 2, item.name);
+      }
+    } else {
+      drawCameraPlaceholder(imgX + imgW / 2, imgY + imgH / 2, item.name);
+    }
+
+    // ===== PRINTING METHODS (right side) =====
+    const printMethods = ['ENGRAVE', 'SCREEN\nPRINTING', 'UV\nPRINTING', 'DTF\nSTICKER'];
+    const pmStartX = 140;
+    const pmStartY = 45;
+    printMethods.forEach((method, i) => {
+      drawPrintMethodIcon(pmStartX + 12, pmStartY + (i * 22), method);
+    });
+
+    // ===== PRODUCT SPECS TABLE =====
+    const specY = 180;
+    doc.setFillColor(WHITE[0], WHITE[1], WHITE[2]);
+    doc.roundedRect(25, specY, 140, 12, 1, 1, 'F');
+    doc.setDrawColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(25, specY, 140, 12, 1, 1, 'S');
+
+    // Product code table header
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    doc.text(displayName.substring(0, 20), 30, specY + 8);
+
+    // SKU/Code
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.text(item.sku || item.id?.substring(0, 8) || 'UG-001', 120, specY + 8);
+
+    // Divider line in table
+    doc.setDrawColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    doc.setLineWidth(0.3);
+    doc.line(110, specY + 2, 110, specY + 10);
+
+    // ===== BULLET POINT SPECS =====
+    const bulletY = specY + 18;
+    const specs = [];
+    if (item.description) {
+      const descLines = doc.splitTextToSize(item.description, 130);
+      descLines.forEach((line: string) => specs.push(line));
+    }
+    if (item.category) specs.push(`Category: ${item.category}`);
+    specs.push('Custom branding available');
+
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    specs.slice(0, 4).forEach((spec: string, i: number) => {
+      // Bullet dot
+      doc.setFillColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+      doc.circle(30, bulletY + (i * 5) + 1.5, 0.8, 'F');
+      doc.text(spec, 34, bulletY + (i * 5) + 2);
+    });
+
+    // ===== COLOR VARIANTS (bottom) =====
+    if (item.sizes && item.sizes.length > 0) {
+      const varY = 240;
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(7);
+      doc.setTextColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+      doc.text('AVAILABLE OPTIONS:', 30, varY);
+
+      item.sizes.forEach((size: any, i: number) => {
+        const sizeName = typeof size === 'string' ? size : size.name || size;
+        const vx = 30 + (i * 30);
+        // Small circle with color
+        doc.setFillColor(LIGHT_GRAY[0], LIGHT_GRAY[1], LIGHT_GRAY[2]);
+        doc.setDrawColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+        doc.setLineWidth(0.3);
+        doc.circle(vx + 6, varY + 10, 5, 'FD');
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(6);
+        doc.text(sizeName.substring(0, 10), vx + 6, varY + 20, { align: 'center' });
+      });
+    }
+
+    // ===== FEATURE ICONS (bottom left) =====
+    const featY = 258;
+    const features = ['NO BPA\nBPA Free', 'Eco\nFriendly', 'Recyclable'];
+    features.forEach((feat, i) => {
+      drawFeatureIcon(45 + (i * 25), featY, feat);
+    });
+
+    // ===== PRICE BADGE (bottom right) =====
+    const priceToUse = typeof item.sellingPrice === 'number' ? item.sellingPrice : (item.price || 0);
+    if (priceToUse > 0) {
+      doc.setFillColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+      doc.roundedRect(145, 255, 50, 25, 3, 3, 'F');
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+      doc.text('MRP', 170, 263, { align: 'center' });
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.text(`₹${Number(priceToUse).toLocaleString('en-IN')}`, 170, 274, { align: 'center' });
+    }
+
+    // ===== FOOTER =====
+    doc.setDrawColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    doc.setLineWidth(0.3);
+    doc.line(20, 290, 195, 290);
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(6);
+    doc.setTextColor(DARK_ACCENT[0], DARK_ACCENT[1], DARK_ACCENT[2]);
+    doc.text('PrintField  |  aryan@printfield.in  |  +91-9606371222', 25, 294);
+    doc.text(`Page ${page.pageNum}`, 190, 294, { align: 'right' });
   });
 
   // ==========================================

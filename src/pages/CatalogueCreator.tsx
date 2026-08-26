@@ -64,6 +64,7 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
   const [showAiPreview, setShowAiPreview] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiEditingIndex, setAiEditingIndex] = useState<number | null>(null);
+  const [aiGeneratingImage, setAiGeneratingImage] = useState<number | null>(null);
 
   
   const toggleCart = (item: CatalogueItem) => {
@@ -429,6 +430,45 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
       alert(`Successfully saved ${data.count} products to catalogue!`);
     } catch (err: any) {
       setAiError(err.message || 'Failed to save products');
+    }
+  };
+
+  const handleGenerateImage = async (index: number) => {
+    const product = aiExtractedProducts[index];
+    if (!product.imageUrl) return;
+
+    setAiGeneratingImage(index);
+    setAiError(null);
+
+    try {
+      // Fetch the image as a blob
+      const imgResponse = await fetch(product.imageUrl);
+      const blob = await imgResponse.blob();
+
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", blob, `product-${Date.now()}.webp`);
+      formDataUpload.append("name", product.name || "product");
+      formDataUpload.append("description", product.description || "");
+      formDataUpload.append("colors", JSON.stringify(product.colors || []));
+
+      const response = await fetch('/api/catalogue/generate-image', {
+        method: 'POST',
+        body: formDataUpload,
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Image generation failed');
+      }
+
+      const data = await response.json();
+      setAiExtractedProducts(prev => prev.map((p, i) =>
+        i === index ? { ...p, imageUrl: data.imageUrl, generated: true } : p
+      ));
+    } catch (err: any) {
+      setAiError(`Image generation failed: ${err.message}`);
+    } finally {
+      setAiGeneratingImage(null);
     }
   };
 
@@ -1460,8 +1500,24 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
 
                     <div className="flex gap-3">
                       {product.imageUrl && (
-                        <div className="w-24 h-24 rounded-lg overflow-hidden bg-slate-200 shrink-0">
-                          <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                        <div className="w-28 shrink-0 space-y-2">
+                          <div className="w-28 h-28 rounded-lg overflow-hidden bg-slate-200">
+                            <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                          </div>
+                          {product.generated && (
+                            <span className="block text-[10px] text-green-600 font-medium text-center">AI Generated</span>
+                          )}
+                          <button
+                            onClick={() => handleGenerateImage(index)}
+                            disabled={aiGeneratingImage === index}
+                            className="w-full flex items-center justify-center gap-1 px-2 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-md text-[11px] font-semibold hover:from-purple-600 hover:to-indigo-600 transition-all disabled:opacity-50"
+                          >
+                            {aiGeneratingImage === index ? (
+                              <><Loader2 size={12} className="animate-spin" /> Generating...</>
+                            ) : (
+                              <><Sparkles size={12} /> Regenerate</>
+                            )}
+                          </button>
                         </div>
                       )}
                       <div className="flex-1 space-y-2">

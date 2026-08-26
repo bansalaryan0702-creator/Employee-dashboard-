@@ -925,6 +925,68 @@ Do NOT include any text outside the JSON.`;
     }
   });
 
+  // ====== AI IMAGE GENERATION ======
+  // Generate a new product image from a cropped catalogue image using Stable Diffusion
+  app.post("/api/catalogue/generate-image", upload.single("file"), async (req, res) => {
+    try {
+      const { name, description, colors } = req.body;
+      const file = req.file;
+
+      if (!file) {
+        return res.status(400).json({ error: "No image file provided" });
+      }
+
+      const base64Data = file.buffer.toString("base64");
+
+      // First crop the image to 4:3 ratio
+      const sharp = (await import("sharp")).default;
+      const croppedBuffer = await sharp(file.buffer)
+        .resize({ width: 768, height: 576, fit: "cover", position: "centre" })
+        .webp({ quality: 95 })
+        .toBuffer();
+
+      // Call Python to generate new product image
+      const { execSync } = await import("child_process");
+      const inputJson = JSON.stringify({
+        image_b64: croppedBuffer.toString("base64"),
+        name: name || "product",
+        description: description || "",
+        colors: colors ? JSON.parse(colors) : [],
+      });
+
+      const pythonPath = process.env.PYTHON_PATH || "python";
+      const scriptPath = path.join(__dirname, "generate_image.py");
+
+      const result = execSync(`${pythonPath} "${scriptPath}" generate`, {
+        input: inputJson,
+        timeout: 120000,
+        maxBuffer: 50 * 1024 * 1024,
+      });
+
+      const output = JSON.parse(result.toString());
+
+      // Upload generated image to Cloudinary
+      let imageUrl = "";
+      if (process.env.CLOUDINARY_CLOUD_NAME && output.image_base64) {
+        try {
+          const dataUrl = `data:${output.mime_type || "image/webp"};base64,${output.image_base64}`;
+          imageUrl = await cloudinaryUpload(dataUrl, "catalogue", `product-${Date.now()}`) || "";
+        } catch (e: any) {
+          console.error("Cloudinary upload failed for generated image:", e.message);
+        }
+      }
+
+      res.json({
+        imageUrl,
+        promptUsed: output.prompt_used,
+        croppedBase64: `data:image/webp;base64,${croppedBuffer.toString("base64")}`,
+      });
+    } catch (error: any) {
+      console.error("AI image generation failed:", error.message);
+      res.status(500).json({ error: error.message || "Image generation failed" });
+    }
+  });
+
   // ====== GEMINI API PRODUCT DESCRIPTION ======
   app.post("/api/generate-description", async (req, res) => {
     const { brandName, name, category } = req.body;

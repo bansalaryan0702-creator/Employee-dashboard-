@@ -9,6 +9,9 @@ import { createServer as createViteServer } from "vite";
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
 // Lazy S3 client initialization
@@ -16,6 +19,7 @@ let s3Client: S3Client | null = null;
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3.2";
+const OLLAMA_VISION_MODEL = process.env.OLLAMA_VISION_MODEL || "llava";
 const GDRIVE_SCRIPT_URL = process.env.GOOGLE_DRIVE_SCRIPT_URL || "";
 
 function getCloudinary() {
@@ -797,8 +801,7 @@ async function startServer() {
     }
   });
 
-  // ====== AI CATALOGUE IMAGE EXTRACTION ======
-  // Upload a catalogue page/image and AI extracts individual products
+  // ====== AI CATALOGUE EXTRACTION (PDF/Images → 4:3 crops) ======
   app.post("/api/catalogue/ai-extract", upload.array("files", 20), async (req, res) => {
     try {
       const files = req.files as Express.Multer.File[];
@@ -807,83 +810,77 @@ async function startServer() {
       }
 
       const results: any[] = [];
+      const tmpDir = path.join(process.cwd(), "tmp");
+      if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
 
       for (const file of files) {
-        const base64 = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+        let imageBuffers: Buffer[] = [];
 
-        // Use Ollama vision to analyze the image and identify products
-        let productInfo: any = { name: "", description: "", colors: [] };
-        try {
-          const prompt = `Analyze this product image. Respond ONLY with valid JSON (no markdown, no code fences):
-{
-  "name": "short product name (2-4 words)",
-  "description": "one sentence product description",
-  "colors": ["list of color variants visible or mentioned"]
-}
-Do NOT include any text outside the JSON.`;
-
-          const response = await fetch(`${OLLAMA_BASE_URL}/api/chat`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              model: OLLAMA_MODEL,
-              messages: [{
-                role: "user",
-                content: prompt,
-                images: [base64.split(",")[1]]
-              }],
-              stream: false,
-              options: { temperature: 0.3 }
-            })
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            const content = data.message?.content?.trim() || "";
-            // Extract JSON from response
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-              productInfo = JSON.parse(jsonMatch[0]);
-            }
-          }
-        } catch (e) {
-          console.log("AI analysis failed for image, using defaults");
-        }
-
-        // Crop image to 4:3 ratio (center crop)
-        const processedBuffer = await sharp(file.buffer)
-          .resize({
-            width: 800,
-            height: 600,
-            fit: "cover",
-            position: "centre"
-          })
-          .toBuffer();
-
-        const processedBase64 = `data:image/jpeg;base64,${processedBuffer.toString("base64")}`;
-
-        // Upload to Cloudinary
-        let imageUrl = "";
-        if (process.env.CLOUDINARY_CLOUD_NAME) {
+        if (file.mimetype === "application/pdf") {
+          const tmpPdf = path.join(tmpDir, `upload-${Date.now()}.pdf`);
+          fs.writeFileSync(tmpPdf, file.buffer);
           try {
-            imageUrl = await cloudinaryUpload(processedBase64, "catalogue", `product-${Date.now()}-${Math.random().toString(36).slice(2)}`) || "";
+            const { execSync } = await import("child_process");
+            const pythonPath = process.env.PYTHON_PATH || "python";
+            const raw = execSync(`"${pythonPath}" -W ignore "${path.join(process.cwd(), "pdf_to_images.py")}" "${tmpPdf}" 2>NUL`, {
+              timeout: 60000, maxBuffer: 50 * 1024 * 1024, windowsHide: true,
+            });
+            const pages: string[] = JSON.parse(raw.toString().trim());
+            pages.forEach(b64 => imageBuffers.push(Buffer.from(b64, "base64")));
           } catch (e: any) {
-            console.error("Cloudinary upload failed:", e.message);
+            console.error("PDF conversion failed:", e.message);
+          } finally {
+            try { fs.unlinkSync(tmpPdf); } catch {}
           }
+        } else {
+          imageBuffers.push(file.buffer);
         }
 
-        results.push({
-          name: productInfo.name || "Untitled Product",
-          description: productInfo.description || "",
-          imageUrl,
-          colors: productInfo.colors || [],
-        });
+        for (const imgBuf of imageBuffers) {
+          const cropped = await sharp(imgBuf).resize({ width: 768, height: 576, fit: "cover", position: "centre" }).jpeg({ quality: 90 }).toBuffer();
+          const croppedBase64 = `data:image/jpeg;base64,${cropped.toString("base64")}`;
+
+          let imageUrl = "";
+          if (process.env.CLOUDINARY_CLOUD_NAME) {
+            try { imageUrl = await cloudinaryUpload(croppedBase64, "catalogue", `crop-${Date.now()}-${Math.random().toString(36).slice(2,8)}`) || ""; } catch {}
+          }
+
+          results.push({ name: "Product", description: "", imageUrl, colors: [] });
+        }
       }
 
+      try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
       res.json({ products: results });
     } catch (error: any) {
-      console.error("AI extraction failed:", error);
-      res.status(500).json({ error: error.message || "AI extraction failed" });
+      console.error("Extraction failed:", error);
+      res.status(500).json({ error: error.message || "Extraction failed" });
+    }
+  });
+
+  // ====== AI IMAGE REGENERATION (Pollinations AI) ======
+  app.post("/api/catalogue/generate-image", upload.single("file"), async (req, res) => {
+    try {
+      const { name, description, colors } = req.body;
+      const file = req.file;
+      if (!file) return res.status(400).json({ error: "No image file provided" });
+
+      const colorStr = colors ? JSON.parse(colors).join(", ") : "";
+      const prompt = `Professional product photography of ${name || "product"}, ${description || ""}. ${colorStr ? "Colors: " + colorStr + "." : ""} Clean white background, studio lighting, e-commerce style, sharp focus, photorealistic`;
+
+      const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=576&model=flux&seed=${Math.floor(Math.random() * 10000)}`;
+      const imgResponse = await fetch(pollinationsUrl);
+      if (!imgResponse.ok) throw new Error("Pollinations API failed");
+
+      const imgBuffer = Buffer.from(await imgResponse.arrayBuffer());
+      let imageUrl = "";
+      if (process.env.CLOUDINARY_CLOUD_NAME) {
+        imageUrl = await cloudinaryUpload(`data:image/jpeg;base64,${imgBuffer.toString("base64")}`, "catalogue", `gen-${Date.now()}`) || "";
+      }
+
+      res.json({ imageUrl, promptUsed: prompt });
+    } catch (error: any) {
+      console.error("Image generation failed:", error.message);
+      res.status(500).json({ error: error.message || "Image generation failed" });
     }
   });
 
@@ -894,96 +891,27 @@ Do NOT include any text outside the JSON.`;
       if (!products || !Array.isArray(products)) {
         return res.status(400).json({ error: "Products array required" });
       }
-
       const db = await readDB();
       if (!db.catalogueItems) db.catalogueItems = [];
-
       const saved = [];
       for (const p of products) {
         const item = {
-          id: uuidv4(),
-          brandName: p.brandName || "",
-          name: p.name || "Untitled",
-          description: p.description || "",
-          price: typeof p.price === "number" ? p.price : 0,
+          id: uuidv4(), brandName: p.brandName || "", name: p.name || "Untitled",
+          description: p.description || "", price: typeof p.price === "number" ? p.price : 0,
           purchasePrice: typeof p.purchasePrice === "number" ? p.purchasePrice : 0,
           sellingPrice: typeof p.sellingPrice === "number" ? p.sellingPrice : 0,
           gstRate: typeof p.gstRate === "number" ? p.gstRate : 18,
-          category: p.category || "Uncategorized",
-          imageUrl: p.imageUrl || "",
+          category: p.category || "Uncategorized", imageUrl: p.imageUrl || "",
           sizes: p.colors?.length ? p.colors.map((c: string) => ({ name: c, price: 0 })) : []
         };
         db.catalogueItems.push(item);
         saved.push(item);
       }
-
       await writeDB(db);
       res.json({ saved, count: saved.length });
     } catch (error: any) {
-      console.error("Failed to save extracted products:", error);
-      res.status(500).json({ error: error.message || "Failed to save products" });
-    }
-  });
-
-  // ====== AI IMAGE GENERATION ======
-  // Generate a new product image from a cropped catalogue image using Stable Diffusion
-  app.post("/api/catalogue/generate-image", upload.single("file"), async (req, res) => {
-    try {
-      const { name, description, colors } = req.body;
-      const file = req.file;
-
-      if (!file) {
-        return res.status(400).json({ error: "No image file provided" });
-      }
-
-      const base64Data = file.buffer.toString("base64");
-
-      // First crop the image to 4:3 ratio
-      const sharp = (await import("sharp")).default;
-      const croppedBuffer = await sharp(file.buffer)
-        .resize({ width: 768, height: 576, fit: "cover", position: "centre" })
-        .webp({ quality: 95 })
-        .toBuffer();
-
-      // Call Python to generate new product image
-      const { execSync } = await import("child_process");
-      const inputJson = JSON.stringify({
-        image_b64: croppedBuffer.toString("base64"),
-        name: name || "product",
-        description: description || "",
-        colors: colors ? JSON.parse(colors) : [],
-      });
-
-      const pythonPath = process.env.PYTHON_PATH || "python";
-      const scriptPath = path.join(__dirname, "generate_image.py");
-
-      const result = execSync(`${pythonPath} "${scriptPath}" generate`, {
-        input: inputJson,
-        timeout: 120000,
-        maxBuffer: 50 * 1024 * 1024,
-      });
-
-      const output = JSON.parse(result.toString());
-
-      // Upload generated image to Cloudinary
-      let imageUrl = "";
-      if (process.env.CLOUDINARY_CLOUD_NAME && output.image_base64) {
-        try {
-          const dataUrl = `data:${output.mime_type || "image/webp"};base64,${output.image_base64}`;
-          imageUrl = await cloudinaryUpload(dataUrl, "catalogue", `product-${Date.now()}`) || "";
-        } catch (e: any) {
-          console.error("Cloudinary upload failed for generated image:", e.message);
-        }
-      }
-
-      res.json({
-        imageUrl,
-        promptUsed: output.prompt_used,
-        croppedBase64: `data:image/webp;base64,${croppedBuffer.toString("base64")}`,
-      });
-    } catch (error: any) {
-      console.error("AI image generation failed:", error.message);
-      res.status(500).json({ error: error.message || "Image generation failed" });
+      console.error("Failed to save:", error);
+      res.status(500).json({ error: error.message || "Failed to save" });
     }
   });
 

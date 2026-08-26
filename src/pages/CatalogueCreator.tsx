@@ -1053,13 +1053,13 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
               <Plus className="w-4 h-4" />
               Add Item
             </button>
-            <input 
-              type="file" 
-              multiple 
-              accept="image/*" 
-              className="hidden" 
-              ref={bulkFileInputRef} 
-              onChange={handleBulkImageSelect} 
+            <input
+              type="file"
+              multiple
+              accept="image/*,.pdf"
+              className="hidden"
+              ref={aiExtractInputRef}
+              onChange={handleAiExtract}
             />
             <button 
               onClick={() => bulkFileInputRef.current?.click()}

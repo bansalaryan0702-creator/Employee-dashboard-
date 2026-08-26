@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import nodemailer from "nodemailer";
 import express from "express";
 import path from "path";
@@ -16,13 +17,40 @@ const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3.2";
 const GDRIVE_SCRIPT_URL = process.env.GOOGLE_DRIVE_SCRIPT_URL || "";
 
-// Configure Cloudinary if credentials exist
-if (process.env.CLOUDINARY_CLOUD_NAME) {
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+function getCloudinary() {
+  if (!cloudinary.config().cloud_name) {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true,
+    });
+  }
+  return cloudinary;
+}
+
+async function cloudinaryUpload(fileBase64: string, folder: string, publicId: string): Promise<string | null> {
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  if (!cloudName) return null;
+
+  const formData = new URLSearchParams();
+  formData.append("file", fileBase64);
+  formData.append("folder", folder);
+  formData.append("public_id", publicId);
+  formData.append("upload_preset", "db-backup");
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: formData.toString(),
   });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Cloudinary upload failed: ${response.status} ${errText}`);
+  }
+  const result = await response.json();
+  return result.secure_url;
 }
 
 function getS3FileUrl(bucketName: string, key: string): string {
@@ -170,7 +198,8 @@ async function readDB(): Promise<any> {
   // Try Cloudinary backup if local is empty
   if (!data && process.env.CLOUDINARY_CLOUD_NAME) {
     try {
-      const result = await cloudinary.search.expression("folder:db-backup AND filename:db.json").execute();
+      const c = getCloudinary();
+      const result = await c.search.expression("folder:db-backup AND filename:db.json").execute();
       if (result.resources && result.resources.length > 0) {
         const resource = result.resources[0];
         const response = await fetch(resource.secure_url);
@@ -227,16 +256,9 @@ async function writeDB(data: any) {
   if (process.env.CLOUDINARY_CLOUD_NAME) {
     try {
       const jsonStr = JSON.stringify(data, null, 2);
-      const result = await cloudinary.uploader.upload(
-        `data:application/json;base64,${Buffer.from(jsonStr).toString("base64")}`,
-        {
-          folder: "db-backup",
-          public_id: "db",
-          resource_type: "raw",
-          overwrite: true,
-        }
-      );
-      console.log("Database backed up to Cloudinary:", result.secure_url);
+      const base64 = `data:application/json;base64,${Buffer.from(jsonStr).toString("base64")}`;
+      const url = await cloudinaryUpload(base64, "db-backup", `db-${Date.now()}`);
+      if (url) console.log("Database backed up to Cloudinary:", url);
     } catch (e: any) {
       console.error("Cloudinary backup failed:", e.message);
     }

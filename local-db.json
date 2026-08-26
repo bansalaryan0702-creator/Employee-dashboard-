@@ -5,6 +5,66 @@
       "username": "admin",
       "password": "password123",
       "role": "admin"
+    },
+    {
+      "id": "6f07c36d-0eec-46ab-899b-d42426ef9104",
+      "username": "CloudTest",
+      "password": "Test@123",
+      "role": "employee"
+    },
+    {
+      "id": "d2b72a4a-09bb-4c59-b1d9-a50958c1e479",
+      "username": "BackupTest",
+      "password": "Test@123",
+      "role": "employee"
+    },
+    {
+      "id": "8e2840e8-9df8-485f-9cab-3c7f6c2c73ce",
+      "username": "CloudTest2",
+      "password": "Test@123",
+      "role": "employee"
+    },
+    {
+      "id": "4de91e42-2aa5-4f47-b652-d9fbe62c298c",
+      "username": "CloudTest3",
+      "password": "Test@123",
+      "role": "employee"
+    },
+    {
+      "id": "78d9b496-e3e2-4729-8de9-8178d9356850",
+      "username": "BackupVerify",
+      "password": "Test@123",
+      "role": "employee"
+    },
+    {
+      "id": "89ad8685-840c-456f-aad2-a78cfc553bbd",
+      "username": "FinalTest",
+      "password": "Test@123",
+      "role": "employee"
+    },
+    {
+      "id": "7b9030d1-a0cc-440e-8ca7-ba5c296e5049",
+      "username": "CloudFinal",
+      "password": "Test@123",
+      "role": "employee"
+    },
+    {
+      "id": "5b130c51-c242-45f9-b351-c203dd32199f",
+      "username": "CloudFinal2",
+      "password": "Test@123",
+      "role": "employee"
+    },
+    {
+      "id": "62d0849c-3f5e-49af-8540-bb19002c8696",
+      "username": "CloudWorks",
+      "password": "Test@123",
+      "role": "employee"
+    },
+    {
+      "id": "e4217838-3df2-4729-9be0-1aef38716751",
+      "username": "CloudWorks2",
+      "password": "Test@123",
+      "role": "employee"
     }
   ],
   "tickets": [],
@@ -91,5 +151,14 @@
   "customers": [],
   "vendors": [],
   "catalogueItems": [],
-  "categories": ["Mugs", "T-Shirts", "Notebooks", "Water Bottles", "Business Cards", "Flyers", "Posters", "Banners"]
+  "categories": [
+    "Mugs",
+    "T-Shirts",
+    "Notebooks",
+    "Water Bottles",
+    "Business Cards",
+    "Flyers",
+    "Posters",
+    "Banners"
+  ]
 }

@@ -623,7 +623,7 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
             <div key={item.id} className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
               <div className="h-48 bg-slate-100 flex items-center justify-center relative overflow-hidden group">
                 {item.imageUrl ? (
-                  <img src={item.imageUrl?.includes('amazonaws.com') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img src={item.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
                 ) : (
                   <Box className="w-12 h-12 text-slate-300" />
                 )}
@@ -905,7 +905,7 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
                         </div>
                       ) : formData.imageUrl ? (
                         <div className="flex flex-col items-center justify-center gap-2 w-full">
-                          <img src={formData.imageUrl?.includes('amazonaws.com') ? `/api/proxy-image?url=${encodeURIComponent(formData.imageUrl)}` : formData.imageUrl} alt="Uploaded preview" className="h-20 object-contain rounded" referrerPolicy="no-referrer" />
+                          <img src={formData.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(formData.imageUrl)}` : formData.imageUrl} alt="Uploaded preview" className="h-20 object-contain rounded" referrerPolicy="no-referrer" />
                           <span className="text-xs text-green-600 font-medium">Upload successful!</span>
                           <span className="text-[10px] text-slate-400 truncate max-w-full">{formData.imageUrl}</span>
                           <span className="text-[10px] text-blue-500 hover:underline">Change image</span>
@@ -1073,7 +1073,7 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
             <div key={item.id} className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
               <div className="h-48 bg-slate-100 flex items-center justify-center relative overflow-hidden group">
                 {item.imageUrl ? (
-                  <img src={item.imageUrl?.includes('amazonaws.com') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img src={item.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
                 ) : (
                   <Box className="w-12 h-12 text-slate-300" />
                 )}
@@ -1346,7 +1346,7 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
                       </div>
                     ) : formData.imageUrl ? (
                       <div className="flex flex-col items-center justify-center gap-2 w-full">
-                        <img src={formData.imageUrl?.includes('amazonaws.com') ? `/api/proxy-image?url=${encodeURIComponent(formData.imageUrl)}` : formData.imageUrl} alt="Uploaded preview" className="h-20 object-contain rounded" referrerPolicy="no-referrer" />
+                        <img src={formData.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(formData.imageUrl)}` : formData.imageUrl} alt="Uploaded preview" className="h-20 object-contain rounded" referrerPolicy="no-referrer" />
                         <span className="text-xs text-green-600 font-medium">Upload successful!</span>
                         <span className="text-[10px] text-slate-400 truncate max-w-full">{formData.imageUrl}</span>
                         <span className="text-[10px] text-blue-500 hover:underline">Change image</span>

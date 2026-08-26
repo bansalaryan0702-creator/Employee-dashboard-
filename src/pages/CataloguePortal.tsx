@@ -111,7 +111,7 @@ export default function CataloguePortal() {
             <div key={item.id} className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
               <div className="h-48 bg-slate-100 flex items-center justify-center">
                 {item.imageUrl ? (
-                  <img src={item.imageUrl?.includes('amazonaws.com') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img src={item.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
                 ) : (
                   <Box className="w-12 h-12 text-slate-300" />
                 )}

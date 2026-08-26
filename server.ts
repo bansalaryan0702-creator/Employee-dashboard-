@@ -44,7 +44,9 @@ async function cloudinaryUpload(fileBase64: string, folder: string, publicId: st
   formData.append("public_id", publicId);
   formData.append("upload_preset", "db-backup");
 
-  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, {
+  const isImage = fileBase64.startsWith("data:image/");
+  const resourceType = isImage ? "image" : "raw";
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: formData.toString(),
@@ -298,14 +300,12 @@ async function startServer() {
         return res.status(400).json({ error: "fileName, fileType, and base64Data are required" });
       }
 
-      // Priority 1: Cloudinary (free 25GB)
+      // Priority 1: Cloudinary unsigned upload (free 25GB)
       if (process.env.CLOUDINARY_CLOUD_NAME) {
         try {
-          const result = await cloudinary.uploader.upload(
-            `data:${fileType};base64,${base64Data}`,
-            { folder: "dashboard", public_id: `${Date.now()}-${fileName}` }
-          );
-          return res.json({ success: true, url: result.secure_url });
+          const base64Full = `data:${fileType};base64,${base64Data}`;
+          const url = await cloudinaryUpload(base64Full, "dashboard", `${Date.now()}-${Math.random().toString(36).slice(2,8)}`);
+          if (url) return res.json({ success: true, url });
         } catch (cloudErr: any) {
           console.error("Cloudinary upload failed, trying next option:", cloudErr.message);
         }
@@ -367,39 +367,30 @@ async function startServer() {
         return res.status(400).send("URL is required");
       }
 
-      const match = url.match(/https:\/\/([^.]+)\.s3\.[^.]+\.amazonaws\.com\/(.+)/);
-      console.log("Proxying image:", url, "Match:", match);
-      if (!match) {
-        return res.redirect(url);
-      }
-
-      const bucketName = match[1];
-      const key = decodeURIComponent(match[2]);
-      console.log("Bucket:", bucketName, "Key:", key);
-
-      // If S3 is not configured, redirect directly
-      if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-        return res.redirect(url);
-      }
-
-      const client = getS3Client();
-      const command = new GetObjectCommand({
-        Bucket: bucketName,
-        Key: key,
-      });
-
-      const response = await client.send(command);
-      if (response.ContentType) {
-        res.setHeader("Content-Type", response.ContentType);
-      }
-      if (response.CacheControl) {
-        res.setHeader("Cache-Control", response.CacheControl);
+      const s3Match = url.match(/https:\/\/([^.]+)\.s3\.[^.]+\.amazonaws\.com\/(.+)/);
+      if (s3Match) {
+        const bucketName = s3Match[1];
+        const key = decodeURIComponent(s3Match[2]);
+        if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+          return res.redirect(url);
+        }
+        const client = getS3Client();
+        const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
+        const response = await client.send(command);
+        if (response.ContentType) res.setHeader("Content-Type", response.ContentType);
+        res.setHeader("Cache-Control", response.CacheControl || "public, max-age=31536000");
+        const stream = response.Body as any;
+        stream.pipe(res);
       } else {
+        // For Cloudinary and other URLs, fetch and pipe
+        const imgRes = await fetch(url);
+        if (!imgRes.ok) return res.status(imgRes.status).send("Failed to fetch image");
+        const ct = imgRes.headers.get("content-type");
+        if (ct) res.setHeader("Content-Type", ct);
         res.setHeader("Cache-Control", "public, max-age=31536000");
+        const buffer = Buffer.from(await imgRes.arrayBuffer());
+        res.send(buffer);
       }
-      
-      const stream = response.Body as any;
-      stream.pipe(res);
     } catch (error: any) {
       console.error("Proxy image error:", error);
       res.status(500).send("Failed to load image");

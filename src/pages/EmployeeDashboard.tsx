@@ -1139,7 +1139,7 @@ export default function EmployeeDashboard() {
                               />
                             </div>
                             {item.imageUrl ? (
-                              <img src={item.imageUrl?.includes('amazonaws.com') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                              <img src={item.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
                             ) : (
                               <Box className="w-12 h-12 text-gray-300" />
                             )}
@@ -1264,7 +1264,7 @@ export default function EmployeeDashboard() {
                         
                         {item.imageUrl ? (
                           <div className="w-20 h-20 rounded-lg overflow-hidden border border-gray-100 shrink-0 bg-gray-50">
-                            <img src={item.imageUrl?.includes('amazonaws.com') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                            <img src={item.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
                           </div>
                         ) : (
                           <div className="w-20 h-20 rounded-lg border border-gray-100 shrink-0 bg-gray-50 flex items-center justify-center">

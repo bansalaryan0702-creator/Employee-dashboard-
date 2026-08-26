@@ -210,7 +210,7 @@ export async function downloadCartPdf(cartItems: any[], user: any, showBrandName
 
         const productPromises = cartItems.map((item) => {
       if (item.imageUrl) {
-        const url = item.imageUrl.includes('amazonaws.com') 
+        const url = item.imageUrl.startsWith('http') 
           ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}`
           : item.imageUrl;
         return loadImage(url)

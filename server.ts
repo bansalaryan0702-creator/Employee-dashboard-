@@ -7,7 +7,7 @@ import sharp from "sharp";
 import { v4 as uuidv4 } from 'uuid';
 import { createServer as createViteServer } from "vite";
 import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,42 +17,28 @@ const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3.2";
 const OLLAMA_VISION_MODEL = process.env.OLLAMA_VISION_MODEL || "llava";
 
-function getCloudinary() {
-  if (!cloudinary.config().cloud_name) {
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-      secure: true,
-    });
-  }
-  return cloudinary;
-}
+const s3 = new S3Client({
+  region: process.env.AWS_REGION || "ap-south-1",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+  },
+});
 
-async function cloudinaryUpload(fileBase64: string, folder: string, publicId: string): Promise<string | null> {
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-  if (!cloudName) return null;
+async function s3Upload(buffer: Buffer, folder: string, key: string, contentType: string): Promise<string | null> {
+  const bucket = process.env.AWS_S3_BUCKET;
+  const region = process.env.AWS_REGION || "ap-south-1";
+  if (!bucket) return null;
 
-  const formData = new URLSearchParams();
-  formData.append("file", fileBase64);
-  formData.append("folder", folder);
-  formData.append("public_id", publicId);
-  formData.append("upload_preset", "db-backup");
+  const fullKey = `${folder}/${key}`;
+  await s3.send(new PutObjectCommand({
+    Bucket: bucket,
+    Key: fullKey,
+    Body: buffer,
+    ContentType: contentType,
+  }));
 
-  const isImage = fileBase64.startsWith("data:image/");
-  const resourceType = isImage ? "image" : "raw";
-  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: formData.toString(),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Cloudinary upload failed: ${response.status} ${errText}`);
-  }
-  const result = await response.json();
-  return result.secure_url;
+  return `https://${bucket}.s3.${region}.amazonaws.com/${fullKey}`;
 }
 
 // Default DB state with fallback to original real-world values from the website
@@ -99,7 +85,8 @@ const DEFAULT_DB: any = {
     "Swissmilitary"
   ],
   catalogueItems: [],
-  categories: ["Mugs", "T-Shirts", "Notebooks", "Water Bottles", "Business Cards", "Flyers", "Posters", "Banners"]
+  categories: ["Mugs", "T-Shirts", "Notebooks", "Water Bottles", "Business Cards", "Flyers", "Posters", "Banners"],
+  masterPrices: []
 };
 
 // Attempt to parse dynamic local-db.json on startup to seed/populate everything perfectly
@@ -150,35 +137,44 @@ try {
 // Local DB file path
 const LOCAL_DB_PATH = path.join(process.cwd(), "local-db.json");
 
-// Read DB from local file (primary) or Cloudinary backup
+// Read DB: S3 primary (survives restarts), local cache fallback
 async function readDB(): Promise<any> {
   let data: any = null;
 
-  // Try local file first
-  try {
-    if (fs.existsSync(LOCAL_DB_PATH)) {
-      data = JSON.parse(fs.readFileSync(LOCAL_DB_PATH, "utf8"));
+  // S3 is primary: always try to restore from S3 first (survives server restarts / ephemeral disks)
+  if (process.env.AWS_S3_BUCKET) {
+    try {
+      const result = await s3.send(new GetObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET,
+        Key: "db-backup/db.json",
+      }));
+      const text = await result.Body!.transformToString();
+      const s3Data = JSON.parse(text);
+      if (s3Data && (s3Data.users || s3Data.tickets || s3Data.catalogueItems)) {
+        data = s3Data;
+        try {
+          let shouldWrite = true;
+          if (fs.existsSync(LOCAL_DB_PATH)) {
+            try { shouldWrite = fs.readFileSync(LOCAL_DB_PATH, 'utf8') !== JSON.stringify(data, null, 2); } catch { shouldWrite = true; }
+          }
+          if (shouldWrite) fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(data, null, 2));
+        } catch {}
+      }
+    } catch (e: any) {
+      if (e?.name !== "NoSuchKey" && e?.Code !== "NoSuchKey") {
+        console.error("Failed to restore from S3:", e.message || e);
+      }
     }
-  } catch (e) {
-    console.error("Failed to read local DB:", e);
   }
 
-  // Try Cloudinary backup if local is empty
-  if (!data && process.env.CLOUDINARY_CLOUD_NAME) {
+  // Fall back to local file if S3 had no data
+  if (!data) {
     try {
-      const c = getCloudinary();
-      const result = await c.search.expression("folder:db-backup AND filename:db.json").execute();
-      if (result.resources && result.resources.length > 0) {
-        const resource = result.resources[0];
-        const response = await fetch(resource.secure_url);
-        const text = await response.text();
-        data = JSON.parse(text);
-        console.log("Restored database from Cloudinary backup");
-        fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(data, null, 2));
+      if (fs.existsSync(LOCAL_DB_PATH)) {
+        const local = JSON.parse(fs.readFileSync(LOCAL_DB_PATH, "utf8"));
+        if (local && (local.users || local.tickets)) data = local;
       }
-    } catch (e) {
-      console.error("Failed to restore from Cloudinary:", e);
-    }
+    } catch {}
   }
 
   // Fall back to default
@@ -194,6 +190,9 @@ async function readDB(): Promise<any> {
   if (data.catalogueItems && !Array.isArray(data.catalogueItems)) {
     data.catalogueItems = Object.values(data.catalogueItems);
   }
+  if (data.masterPrices && !Array.isArray(data.masterPrices)) {
+    data.masterPrices = Object.values(data.masterPrices);
+  }
 
   // Ensure all fields exist
   if (!data.users) data.users = [];
@@ -203,6 +202,7 @@ async function readDB(): Promise<any> {
   if (!data.vendors) data.vendors = [];
   if (!data.catalogueItems) data.catalogueItems = [];
   if (!data.categories) data.categories = [];
+  if (!data.masterPrices) data.masterPrices = [];
 
   // Migrate from old local-db.json format (metadata.lists → top-level)
   if (data.metadata && data.metadata.lists) {
@@ -215,20 +215,18 @@ async function readDB(): Promise<any> {
   return data;
 }
 
-// Write DB to local file AND backup to Cloudinary
+// Write DB: local cache + S3 primary (every write goes to S3)
 async function writeDB(data: any) {
-  // Save locally
-  fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(data, null, 2));
-
-  // Backup to Cloudinary
-  if (process.env.CLOUDINARY_CLOUD_NAME) {
+  try { fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(data, null, 2)); } catch (e: any) { console.error("Local write failed:", e.message); }
+  if (process.env.AWS_S3_BUCKET) {
     try {
       const jsonStr = JSON.stringify(data, null, 2);
-      const base64 = `data:application/json;base64,${Buffer.from(jsonStr).toString("base64")}`;
-      const url = await cloudinaryUpload(base64, "db-backup", `db-${Date.now()}`);
-      if (url) console.log("Database backed up to Cloudinary:", url);
+      const buf = Buffer.from(jsonStr);
+      const latestUrl = await s3Upload(buf, "db-backup", "db.json", "application/json");
+      if (latestUrl) console.log("Database backed up to S3:", latestUrl);
+      s3Upload(buf, "db-backup/history", `db-${Date.now()}.json`, "application/json").catch(()=>{});
     } catch (e: any) {
-      console.error("Cloudinary backup failed:", e.message);
+      console.error("S3 backup failed:", e.message);
     }
   }
 }
@@ -245,7 +243,7 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
-  // File Upload endpoint (Cloudinary)
+  // File Upload endpoint (S3)
   app.post("/api/upload", async (req, res) => {
     try {
       const { fileName, fileType, base64Data } = req.body;
@@ -254,12 +252,14 @@ async function startServer() {
         return res.status(400).json({ error: "fileName, fileType, and base64Data are required" });
       }
 
-      if (!process.env.CLOUDINARY_CLOUD_NAME) {
-        return res.status(500).json({ error: "Cloudinary is not configured" });
+      if (!process.env.AWS_S3_BUCKET) {
+        return res.status(500).json({ error: "AWS S3 is not configured" });
       }
 
-      const base64Full = `data:${fileType};base64,${base64Data}`;
-      const url = await cloudinaryUpload(base64Full, "dashboard", `${Date.now()}-${Math.random().toString(36).slice(2,8)}`);
+      const buffer = Buffer.from(base64Data, "base64");
+      const ext = fileName.split(".").pop() || "bin";
+      const key = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const url = await s3Upload(buffer, "dashboard", key, fileType);
       if (url) return res.json({ success: true, url });
       return res.status(500).json({ error: "Upload failed" });
     } catch (error: any) {
@@ -683,6 +683,256 @@ async function startServer() {
     }
   });
 
+  // ====== MASTER PRICES ======
+  app.get("/api/master-prices", async (req, res) => {
+    try {
+      const db = await readDB();
+      res.json(db.masterPrices || []);
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.post("/api/master-prices", async (req, res) => {
+    try {
+      const productName = String(req.body.productName || '').trim();
+      if (!productName) return res.status(400).json({ error: "productName required" });
+      const db = await readDB();
+      if (!db.masterPrices) db.masterPrices = [];
+      const entry = {
+        id: uuidv4(),
+        productName: productName,
+        purchasePrice: Number(req.body.purchasePrice) || 0,
+        tax: Number(req.body.tax) || 0,
+        mrp: Number(req.body.mrp) || 0,
+        category: req.body.category ? String(req.body.category).trim() : "",
+        updatedAt: Date.now()
+      };
+      db.masterPrices.push(entry);
+      await writeDB(db);
+      res.json(entry);
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.put("/api/master-prices/:id", async (req, res) => {
+    try {
+      const db = await readDB();
+      const idx = (db.masterPrices || []).findIndex((x) => x.id === req.params.id);
+      if (idx === -1) return res.status(404).json({ error: "Not found" });
+      const updates = req.body;
+      db.masterPrices[idx] = {
+        ...db.masterPrices[idx],
+        productName: updates.productName !== undefined ? String(updates.productName).trim() : db.masterPrices[idx].productName,
+        purchasePrice: updates.purchasePrice !== undefined ? Number(updates.purchasePrice) : db.masterPrices[idx].purchasePrice,
+        tax: updates.tax !== undefined ? Number(updates.tax) : db.masterPrices[idx].tax,
+        mrp: updates.mrp !== undefined ? Number(updates.mrp) : db.masterPrices[idx].mrp,
+        category: updates.category !== undefined ? String(updates.category).trim() : db.masterPrices[idx].category,
+        updatedAt: Date.now()
+      };
+      await writeDB(db);
+      res.json(db.masterPrices[idx]);
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.delete("/api/master-prices/:id", async (req, res) => {
+    try {
+      const db = await readDB();
+      db.masterPrices = (db.masterPrices || []).filter((x) => x.id !== req.params.id);
+      await writeDB(db);
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.post("/api/master-prices/bulk", async (req, res) => {
+    try {
+      const items = req.body.items;
+      if (!Array.isArray(items)) return res.status(400).json({ error: "items array required" });
+      const db = await readDB();
+      if (!db.masterPrices) db.masterPrices = [];
+      let added = 0, updated = 0;
+      for (const it of items) {
+        const name = String(it.productName || it.name || '').trim();
+        if (!name) continue;
+        const purchasePrice = Number(it.purchasePrice !== undefined ? it.purchasePrice : (it.purchase !== undefined ? it.purchase : (it.cost !== undefined ? it.cost : 0))) || 0;
+        const tax = Number(it.tax !== undefined ? it.tax : (it.gstRate !== undefined ? it.gstRate : (it.gst !== undefined ? it.gst : 0))) || 0;
+        const mrp = Number(it.mrp !== undefined ? it.mrp : (it.sellingPrice !== undefined ? it.sellingPrice : (it.price !== undefined ? it.price : 0))) || 0;
+        const category = it.category ? String(it.category).trim() : "";
+        const idx = db.masterPrices.findIndex((x) => x.productName.toLowerCase().trim() === name.toLowerCase().trim());
+        if (idx !== -1) {
+          db.masterPrices[idx] = { ...db.masterPrices[idx], purchasePrice: purchasePrice, tax: tax, mrp: mrp, category: category, updatedAt: Date.now(), productName: name };
+          updated++;
+        } else {
+          db.masterPrices.push({ id: uuidv4(), productName: name, purchasePrice: purchasePrice, tax: tax, mrp: mrp, category: category, updatedAt: Date.now() });
+          added++;
+        }
+      }
+      if (db.catalogueItems) {
+        for (const catItem of db.catalogueItems) {
+          const mp = db.masterPrices.find((m) => m.productName.toLowerCase().trim() === String(catItem.name || '').toLowerCase().trim());
+          if (mp) {
+            catItem.purchasePrice = mp.purchasePrice;
+            catItem.gstRate = mp.tax;
+            catItem.sellingPrice = mp.mrp;
+            catItem.price = mp.mrp;
+          }
+        }
+      }
+      await writeDB(db);
+      res.json({ added: added, updated: updated, total: db.masterPrices.length });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.post("/api/master-prices/upload", upload.single("file"), async (req, res) => {
+    try {
+      const file = req.file;
+      if (!file) return res.status(400).json({ error: "No file uploaded" });
+      const ext = (file.originalname.split('.').pop() || '').toLowerCase();
+      let rows = [];
+      if (ext === 'xlsx' || ext === 'xls') {
+        const ExcelJS = (await import('exceljs')).default;
+        const wb = new ExcelJS.Workbook();
+        await wb.xlsx.load(file.buffer);
+        const ws = wb.worksheets[0];
+        if (!ws) return res.status(400).json({ error: "No worksheet found" });
+        const headers = [];
+        const headerRow = ws.getRow(1);
+        headerRow.eachCell((cell, colNumber) => {
+          headers[colNumber] = String(cell.value || '').toLowerCase().trim();
+        });
+        const findCol = (keys) => {
+          for (let i = 1; i < headers.length; i++) {
+            const h = headers[i] || '';
+            for (const k of keys) if (h.includes(k)) return i;
+          }
+          return -1;
+        };
+        const colName = findCol(['product', 'item', 'name']);
+        const colPurchase = findCol(['purchase', 'cost', 'buy', 'cp']);
+        const colTax = findCol(['tax', 'gst', 'vat']);
+        const colMrp = findCol(['mrp', 'selling', 'sale']);
+        if (colName === -1) return res.status(400).json({ error: "Could not detect Product Name column. Headers: " + headers.filter(Boolean).join(', ') });
+        ws.eachRow((row, rowNumber) => {
+          if (rowNumber === 1) return;
+          const name = String(row.getCell(colName).value || '').trim();
+          if (!name) return;
+          const cPurchase = colPurchase !== -1 ? colPurchase : colName+1;
+          const cTax = colTax !== -1 ? colTax : colName+2;
+          const cMrp = colMrp !== -1 ? colMrp : colName+3;
+          const purchasePrice = Number(row.getCell(cPurchase).value || 0) || 0;
+          let taxVal = row.getCell(cTax).value;
+          if (typeof taxVal === 'string') taxVal = taxVal.replace('%','');
+          const tax = Number(taxVal || 0) || 0;
+          const mrp = Number(row.getCell(cMrp).value || 0) || 0;
+          if (name.toLowerCase().includes('product') && purchasePrice===0 && mrp===0) return;
+          rows.push({ productName: name, purchasePrice: purchasePrice, tax: tax, mrp: mrp });
+        });
+      } else if (ext === 'pdf') {
+        let text = '';
+        try {
+          const { PDFParse } = await import('pdf-parse');
+          const parser: any = new (PDFParse as any)({ data: file.buffer });
+          const data: any = await parser.getText();
+          text = data.text || '';
+        } catch (e) {}
+        const hasNumbers = (text.match(/[0-9]+/g) || []).length;
+        if (!text || text.trim().length < 100 || hasNumbers < 5) {
+          try {
+            const tmpDir = path.join(process.cwd(), "tmp");
+            if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+            const tmpPdf = path.join(tmpDir, 'upload-' + Date.now() + '.pdf');
+            fs.writeFileSync(tmpPdf, file.buffer);
+            const child = await import("child_process");
+            const raw = child.execSync('python -W ignore "' + path.join(process.cwd(), "pdf_to_images.py") + '" "' + tmpPdf + '" 2>NUL', { timeout: 60000, maxBuffer: 50*1024*1024, windowsHide: true });
+            const pages = JSON.parse(raw.toString().trim());
+            let ocrText = '';
+            for (let i=0; i<Math.min(pages.length, 5); i++) {
+              const b64 = pages[i];
+              try {
+                const visionRes = await fetch(OLLAMA_BASE_URL + '/api/chat', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    model: OLLAMA_VISION_MODEL,
+                    messages: [{ role: 'user', content: 'Extract the price table from this image. Return ONLY a JSON array with objects having keys "productName", "purchasePrice", "tax", "mrp". Example: [{"productName":"Mug","purchasePrice":120,"tax":18,"mrp":199}]. If no table, return [].', images: [b64] }],
+                    stream: false,
+                    options: { temperature: 0.1 }
+                  })
+                });
+                if (visionRes.ok) {
+                  const vd = await visionRes.json();
+                  const content = vd.message ? vd.message.content : '';
+                  const m = content.match(/\[[\s\S]*\]/);
+                  if (m) {
+                    const arr = JSON.parse(m[0]);
+                    if (Array.isArray(arr) && arr.length) {
+                      for (const r of arr) {
+                        const n = String(r.productName || r.name || '').trim();
+                        if (!n) continue;
+                        const pp = Number(r.purchasePrice || r.purchase || 0) || 0;
+                        let tv = r.tax;
+                        if (typeof tv === 'string') tv = tv.replace('%','');
+                        const tvn = Number(tv || 0) || 0;
+                        const mr = Number(r.mrp || r.price || 0) || 0;
+                        rows.push({ productName: n, purchasePrice: pp, tax: tvn, mrp: mr });
+                      }
+                      continue;
+                    }
+                  }
+                  ocrText += content + "\n";
+                }
+              } catch (e) {}
+            }
+            if (rows.length === 0 && ocrText) text = ocrText;
+            try { fs.unlinkSync(tmpPdf); } catch (e) {}
+            try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch (e) {}
+          } catch (e) { console.error("OCR fallback failed", e); }
+        }
+        if (rows.length === 0) {
+          const lines = text.split("\n").map(function(l){return l.trim();}).filter(Boolean);
+          for (const line of lines) {
+            if (line.toLowerCase().indexOf('product') !== -1 && line.toLowerCase().indexOf('price') !== -1 && line.toLowerCase().indexOf('tax') !== -1) continue;
+            const parts = line.split(/\s{2,}|\||\t|,/).map(function(p){return p.trim();}).filter(Boolean);
+            let name = '';
+            let nums = [];
+            if (parts.length >= 2) {
+              const lastThree = parts.slice(-3);
+              nums = lastThree.map(function(v){return Number(String(v).replace(/[^0-9.]/g,''));}).filter(function(n){return !isNaN(n);});
+              name = parts.slice(0, parts.length - nums.length).join(' ').trim();
+              if (!name) name = parts[0];
+            } else {
+              const numMatches = line.match(/[0-9]+\.?[0-9]*/g) || [];
+              nums = numMatches.map(function(n){return Number(n);});
+              name = line.replace(/[0-9]+\.?[0-9]*%?/g,'').replace(/\s{2,}/g,' ').trim();
+            }
+            if (!name || name.length < 2) continue;
+            if (nums.length === 0) continue;
+            let purchasePrice=0, tax=0, mrp=0;
+            if (nums.length >= 3) { purchasePrice=nums[nums.length-3]; tax=nums[nums.length-2]; mrp=nums[nums.length-1]; }
+            else if (nums.length === 2) { purchasePrice=nums[0]; mrp=nums[1]; }
+            else if (nums.length === 1) { mrp=nums[0]; }
+            if (tax > 100) { mrp = tax; tax = 0; }
+            rows.push({ productName: name, purchasePrice: purchasePrice, tax: tax, mrp: mrp });
+          }
+        }
+        if (rows.length === 0) return res.status(400).json({ error: "Could not extract any product rows from PDF. Try Excel or ensure PDF has selectable text." });
+      } else {
+        return res.status(400).json({ error: "Unsupported file type. Use .xlsx, .xls or .pdf" });
+      }
+      res.json({ rows: rows, count: rows.length });
+    } catch (e) {
+      console.error("Master price upload failed", e);
+      res.status(500).json({ error: e.message || "Upload failed" });
+    }
+  });
+
   // ====== AI CATALOGUE EXTRACTION (PDF/Images → crop, enhance, identify) ======
   app.post("/api/catalogue/ai-extract", upload.array("files", 20), async (req, res) => {
     try {
@@ -773,9 +1023,9 @@ async function startServer() {
         const fileSizeMB = fileSizeKB / 1024;
 
         let imageUrl = "";
-        if (process.env.CLOUDINARY_CLOUD_NAME) {
+        if (process.env.AWS_S3_BUCKET) {
           try {
-            imageUrl = await cloudinaryUpload(cropBase64, "catalogue", `crop-${Date.now()}-${i}-${Math.random().toString(36).slice(2,8)}`) || "";
+            imageUrl = await s3Upload(cropBuf, "catalogue", `crop-${Date.now()}-${i}-${Math.random().toString(36).slice(2,8)}.jpg`, "image/jpeg") || "";
           } catch {}
         }
 
@@ -1091,7 +1341,7 @@ Constraints:
   // ====== VITE MIDDLEWARE ======
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { middlewareMode: true, watch: { ignored: ['**/local-db.json', '**/server.log', '**/dist/**'] } },
       appType: "spa",
     });
     app.use(vite.middlewares);

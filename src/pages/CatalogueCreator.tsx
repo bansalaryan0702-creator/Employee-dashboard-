@@ -16,6 +16,8 @@ type CatalogueItem = {
   gstRate?: number;
   category: string;
   imageUrl?: string;
+  images?: string[];
+  colorVariants?: { name: string; hex: string; image: string }[];
   sizes?: string[];
   colors?: string[];
 };
@@ -27,6 +29,7 @@ interface CatalogueCreatorProps {
 export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreatorProps) {
   const { user, logout } = useAuth();
   const [items, setItems] = useState<CatalogueItem[]>([]);
+  const [masterPrices, setMasterPrices] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<CatalogueItem | null>(null);
@@ -36,6 +39,9 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
   const [descError, setDescError] = useState<string | null>(null);
   const [descWarning, setDescWarning] = useState<string | null>(null);
+
+  const [activeImages, setActiveImages] = useState<Record<string, string>>({});
+  const [activeColorNames, setActiveColorNames] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState<Omit<CatalogueItem, 'id'>>({
     brandName: '',
@@ -52,9 +58,11 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
   const [categories, setCategories] = useState<string[]>([]);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [showAddCategoryInput, setShowAddCategoryInput] = useState(false);
-  const [cart, setCart] = useState<(CatalogueItem & { selectedSize?: string })[]>([]);
+  const [cart, setCart] = useState<(CatalogueItem & { selectedSize?: string; selectedColorVariants?: { name: string; hex: string; image: string }[] })[]>([]);
   const [sizeModalItem, setSizeModalItem] = useState<CatalogueItem | null>(null);
   const [selectedSize, setSelectedSize] = useState<string>('');
+  const [colorModalItem, setColorModalItem] = useState<CatalogueItem | null>(null);
+  const [selectedColorNames, setSelectedColorNames] = useState<Set<string>>(new Set());
   const [bulkQueue, setBulkQueue] = useState<string[]>([]);
   const [bulkTotal, setBulkTotal] = useState(0);
   const bulkFileInputRef = useRef<HTMLInputElement>(null);
@@ -71,20 +79,31 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
     if (cart.some(c => c.id === item.id)) {
       setCart(cart.filter(c => c.id !== item.id));
     } else {
-      if (item.sizes && item.sizes.length > 0) {
-        setSizeModalItem(item);
-        setSelectedSize(item.sizes[0]);
-      } else {
-        setCart([...cart, item]);
+      // Apparel with colour variants -> show colour selection first (all selected by default)
+      if (item.category === 'Apparel' && item.colorVariants && item.colorVariants.length > 0) {
+        setColorModalItem(item);
+        setSelectedColorNames(new Set(item.colorVariants.map((c: any) => c.name)));
+        return;
       }
+      setCart([...cart, item]);
     }
+  };
+
+  const confirmAddToCartWithColors = () => {
+    if (!colorModalItem) return;
+    const selectedVariants = (colorModalItem.colorVariants || []).filter((c: any) => selectedColorNames.has(c.name));
+    setCart([...cart, { ...colorModalItem, selectedColorVariants: selectedVariants } as any]);
+    setColorModalItem(null);
+    setSelectedColorNames(new Set());
   };
 
   const confirmAddToCartWithSize = () => {
     if (!sizeModalItem) return;
-    setCart([...cart, { ...sizeModalItem, selectedSize }]);
+    const base: any = sizeModalItem;
+    setCart([...cart, { ...base, selectedSize, selectedColorVariants: base.selectedColorVariants || undefined }]);
     setSizeModalItem(null);
     setSelectedSize('');
+    setSelectedColorNames(new Set());
   };
 
 
@@ -141,7 +160,26 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
 
     loadCatalogue();
     loadCategories();
+    // Load master prices for auto-fill
+    fetch('/api/master-prices').then(r=>r.json()).then(data=> setMasterPrices(Array.isArray(data)?data:[])).catch(()=>{});
   }, []);
+
+  // Auto-fill purchase price / tax / mrp when product name matches master price
+  useEffect(() => {
+    if (!formData.name || masterPrices.length===0) return;
+    const mp = masterPrices.find((m:any)=> m.productName.toLowerCase().trim() === formData.name.toLowerCase().trim());
+    if (mp) {
+      setFormData(prev => ({
+        ...prev,
+        purchasePrice: mp.purchasePrice,
+        gstRate: mp.tax,
+        sellingPrice: mp.mrp,
+        price: mp.mrp
+      }));
+    }
+  }, [formData.name, masterPrices]);
+
+  const getMasterForItem = (item: CatalogueItem) => masterPrices.find((m:any)=> m.productName.toLowerCase().trim() === (item.name||'').toLowerCase().trim());
 
   const handleAddCategory = async (catName: string) => {
     const trimmed = catName.trim();
@@ -623,9 +661,12 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
             <div key={item.id} className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
               <div className="h-48 bg-slate-100 flex items-center justify-center relative overflow-hidden group">
                 {item.imageUrl ? (
-                  <img src={item.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
+                  <img src={(activeImages[item.id] || item.imageUrl)?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(activeImages[item.id] || item.imageUrl)}` : (activeImages[item.id] || item.imageUrl)} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
                 ) : (
                   <Box className="w-12 h-12 text-slate-300" />
+                )}
+                {activeColorNames[item.id] && (
+                  <span className="absolute bottom-2 left-2 bg-slate-900/80 text-white text-xs px-2 py-1 rounded z-10">{activeColorNames[item.id]}</span>
                 )}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                   <button onClick={() => toggleCart(item)} className={`p-2 rounded-full ${cart.some(c => c.id === item.id) ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-slate-700 hover:text-emerald-600 hover:bg-emerald-50'}`}>
@@ -647,7 +688,13 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
                   </span>
                 </div>
                 <p className="text-slate-500 text-sm mb-4 line-clamp-3 whitespace-pre-line flex-grow">{item.description}</p>
-                {item.colors && item.colors.length > 0 && (
+                {item.colorVariants && item.colorVariants.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {item.colorVariants.map((c: any, ci: number) => (
+                      <button key={ci} onClick={() => { if(c.image){ setActiveImages(prev=>({...prev,[item.id]:c.image})); setActiveColorNames(prev=>({...prev,[item.id]:c.name})); } }} className="w-6 h-6 rounded-full border-2 border-white shadow-sm ring-1 ring-slate-200 flex-shrink-0 cursor-pointer hover:scale-110 transition-transform" style={{ backgroundColor: c.hex || '#ccc' }} title={`${c.name} — click to view`} />
+                    ))}
+                  </div>
+                ) : item.colors && item.colors.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-2">
                     {item.colors.map((c: string, ci: number) => (
                       <span key={ci} className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full">{c}</span>
@@ -1073,9 +1120,12 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
             <div key={item.id} className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
               <div className="h-48 bg-slate-100 flex items-center justify-center relative overflow-hidden group">
                 {item.imageUrl ? (
-                  <img src={item.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
+                  <img src={(activeImages[item.id] || item.imageUrl)?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(activeImages[item.id] || item.imageUrl)}` : (activeImages[item.id] || item.imageUrl)} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
                 ) : (
                   <Box className="w-12 h-12 text-slate-300" />
+                )}
+                {activeColorNames[item.id] && (
+                  <span className="absolute bottom-2 left-2 bg-slate-900/80 text-white text-xs px-2 py-1 rounded z-10">{activeColorNames[item.id]}</span>
                 )}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                   <button onClick={() => toggleCart(item)} className={`p-2 rounded-full ${cart.some(c => c.id === item.id) ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-slate-700 hover:text-emerald-600 hover:bg-emerald-50'}`}>
@@ -1097,7 +1147,13 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
                   </span>
                 </div>
                 <p className="text-slate-500 text-sm mb-4 line-clamp-3 whitespace-pre-line flex-grow">{item.description}</p>
-                {item.colors && item.colors.length > 0 && (
+                {item.colorVariants && item.colorVariants.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {item.colorVariants.map((c: any, ci: number) => (
+                      <button key={ci} onClick={() => { if(c.image){ setActiveImages(prev=>({...prev,[item.id]:c.image})); setActiveColorNames(prev=>({...prev,[item.id]:c.name})); } }} className="w-6 h-6 rounded-full border-2 border-white shadow-sm ring-1 ring-slate-200 flex-shrink-0 cursor-pointer hover:scale-110 transition-transform" style={{ backgroundColor: c.hex || '#ccc' }} title={`${c.name} — click to view`} />
+                    ))}
+                  </div>
+                ) : item.colors && item.colors.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-2">
                     {item.colors.map((c: string, ci: number) => (
                       <span key={ci} className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full">{c}</span>
@@ -1441,6 +1497,53 @@ export default function CatalogueCreator({ isEmbedded = false }: CatalogueCreato
               >
                 Add to Cart
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Colour Selection Modal for Apparels */}
+      {colorModalItem && (
+        <div className="fixed inset-0 z-[65] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div className="p-6 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-900">Select Colours — {colorModalItem.name}</h3>
+              <p className="text-sm text-gray-500 mt-1">All colours selected by default. Uncheck to remove from PDF.</p>
+            </div>
+            <div className="p-4 flex justify-between items-center border-b border-gray-100 bg-gray-50">
+              <span className="text-sm font-medium text-gray-700">{selectedColorNames.size} of {colorModalItem.colorVariants?.length || 0} selected</span>
+              <div className="flex gap-2">
+                <button onClick={() => setSelectedColorNames(new Set((colorModalItem.colorVariants || []).map((c:any)=>c.name)))} className="text-xs px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50">Select All</button>
+                <button onClick={() => setSelectedColorNames(new Set())} className="text-xs px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50">Deselect All</button>
+              </div>
+            </div>
+            <div className="p-6 overflow-y-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {(colorModalItem.colorVariants || []).map((c: any) => {
+                  const isChecked = selectedColorNames.has(c.name);
+                  return (
+                    <label key={c.name} className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${isChecked ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                      <input type="checkbox" checked={isChecked} onChange={(e) => {
+                        const next = new Set(selectedColorNames);
+                        if (e.target.checked) next.add(c.name); else next.delete(c.name);
+                        setSelectedColorNames(next);
+                      }} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                      <div className="w-8 h-8 rounded-full border-2 border-white shadow-sm ring-1 ring-gray-200 flex-shrink-0" style={{ backgroundColor: c.hex || '#ccc' }} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate" title={c.name}>{c.name}</p>
+                        <p className="text-xs text-gray-500 truncate">{c.hex}</p>
+                      </div>
+                      {c.image && (
+                        <img src={c.image.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(c.image)}` : c.image} alt="" className="w-10 h-10 object-cover rounded border border-gray-200 flex-shrink-0" />
+                      )}
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="p-4 bg-gray-50 flex justify-end gap-2 border-t border-gray-100">
+              <button onClick={() => { setColorModalItem(null); setSelectedColorNames(new Set()); }} className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
+              <button onClick={confirmAddToCartWithColors} disabled={selectedColorNames.size === 0} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm ${selectedColorNames.size === 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>Add to Cart ({selectedColorNames.size})</button>
             </div>
           </div>
         </div>

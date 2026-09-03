@@ -65,6 +65,10 @@ export default function EmployeeDashboard() {
   const [catalogueMinPrice, setCatalogueMinPrice] = useState('');
   const [catalogueMaxPrice, setCatalogueMaxPrice] = useState('');
   const [catalogueSelectedIds, setCatalogueSelectedIds] = useState<Set<string>>(new Set());
+  const [catalogueActiveImages, setCatalogueActiveImages] = useState<Record<string, string>>({});
+  const [catalogueActiveColorNames, setCatalogueActiveColorNames] = useState<Record<string, string>>({});
+  const [colorModalItem, setColorModalItem] = useState<any>(null);
+  const [selectedColorNames, setSelectedColorNames] = useState<Set<string>>(new Set());
 
   // Cart Tab States
   const [cart, setCart] = useState<any[]>([]);
@@ -74,12 +78,20 @@ export default function EmployeeDashboard() {
 
 
   const handleAddToCartClick = (item: any) => {
-    if (item.sizes && item.sizes.length > 0) {
-      setSizeModalItem(item);
-      setSelectedSize(item.sizes[0]);
-    } else {
-      addToCart(item);
+    if (item.category === 'Apparel' && item.colorVariants && item.colorVariants.length > 0) {
+      setColorModalItem(item);
+      setSelectedColorNames(new Set(item.colorVariants.map((c:any)=>c.name)));
+      return;
     }
+    addToCart(item);
+  };
+
+  const confirmAddToCartWithColors = () => {
+    if (!colorModalItem) return;
+    const selectedVariants = (colorModalItem.colorVariants || []).filter((c:any)=>selectedColorNames.has(c.name));
+    addToCart({ ...colorModalItem, selectedColorVariants: selectedVariants });
+    setColorModalItem(null);
+    setSelectedColorNames(new Set());
   };
 
   const confirmAddToCartWithSize = () => {
@@ -87,11 +99,12 @@ export default function EmployeeDashboard() {
     addToCart({ ...sizeModalItem, selectedSize });
     setSizeModalItem(null);
     setSelectedSize('');
+    setSelectedColorNames(new Set());
   };
 
   const addToCart = (item: any) => {
     setCart(prev => {
-      const existing = prev.find(c => c.id === item.id && c.selectedSize === item.selectedSize);
+      const existing = prev.find(c => c.id === item.id && c.selectedSize === item.selectedSize && JSON.stringify(c.selectedColorVariants||[])===JSON.stringify(item.selectedColorVariants||[]));
       if (existing) {
         return prev;
       }
@@ -104,6 +117,9 @@ export default function EmployeeDashboard() {
         price: item.sellingPrice !== undefined ? item.sellingPrice : (item.price || 0),
         gstRate: item.gstRate || 0,
         imageUrl: item.imageUrl,
+        images: item.images || [],
+        colorVariants: item.colorVariants || [],
+        selectedColorVariants: item.selectedColorVariants || undefined,
         quantity: 1,
         selectedSize: item.selectedSize
       }];
@@ -1121,7 +1137,10 @@ export default function EmployeeDashboard() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {filteredCatalogueItems.map((item) => (
+                    {filteredCatalogueItems.map((item) => {
+                      const displayImage = catalogueActiveImages[item.id] || item.imageUrl;
+                      const displayColor = catalogueActiveColorNames[item.id];
+                      return (
                         <div key={item.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-full">
                           <div className="h-44 bg-gray-50 flex items-center justify-center relative border-b border-gray-100">
                             <div 
@@ -1138,10 +1157,13 @@ export default function EmployeeDashboard() {
                                 className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer pointer-events-none"
                               />
                             </div>
-                            {item.imageUrl ? (
-                              <img src={item.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
+                            {displayImage ? (
+                              <img src={displayImage?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(displayImage)}` : displayImage} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
                             ) : (
                               <Box className="w-12 h-12 text-gray-300" />
+                            )}
+                            {displayColor && (
+                              <span className="absolute bottom-2 left-2 bg-slate-900/80 text-white text-xs px-2 py-1 rounded">{displayColor}</span>
                             )}
                             {item.category && (
                               <span className="absolute top-3 right-3 bg-slate-900/80 text-white text-[10px] uppercase font-bold px-2 py-1 rounded tracking-wider">
@@ -1149,11 +1171,38 @@ export default function EmployeeDashboard() {
                               </span>
                             )}
                           </div>
+                          {item.images && item.images.length > 1 && (
+                            <div className="flex gap-1 p-2 bg-gray-50 border-b border-gray-100 overflow-x-auto">
+                              {item.images.slice(0, 6).map((img: string, idx: number) => {
+                                const isActive = displayImage === img;
+                                return (
+                                  <img key={idx} onClick={() => { setCatalogueActiveImages(prev=>({...prev,[item.id]:img})); setCatalogueActiveColorNames(prev=>({...prev,[item.id]:''})); }} src={img.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(img)}` : img} alt="" className={`w-10 h-10 object-cover rounded border flex-shrink-0 cursor-pointer ${isActive ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'}`} />
+                                );
+                              })}
+                              {item.images.length > 6 && <span className="text-xs text-gray-500 self-center">+{item.images.length - 6}</span>}
+                            </div>
+                          )}
                           <div className="p-4 flex flex-col flex-grow">
                             <h3 className="font-semibold text-gray-800 text-base line-clamp-1">{item.brandName ? `${item.brandName} ${item.name}` : item.name}</h3>
-                            <p className="text-gray-500 text-xs mt-1 mb-4 flex-grow line-clamp-3 leading-relaxed">
+                            <p className="text-gray-500 text-xs mt-1 mb-2 flex-grow line-clamp-3 leading-relaxed">
                               {item.description || 'No description provided.'}
                             </p>
+                            {item.colorVariants && item.colorVariants.length > 0 && (
+                              <div className="mb-2">
+                                <div className="flex flex-wrap gap-1.5">
+                                  {item.colorVariants.map((c: any, i: number) => {
+                                    const isActive = displayColor === c.name;
+                                    return (
+                                      <button key={i} onClick={() => { if(c.image){ setCatalogueActiveImages(prev=>({...prev,[item.id]:c.image})); setCatalogueActiveColorNames(prev=>({...prev,[item.id]:c.name})); } }} className={`w-6 h-6 rounded-full border-2 shadow-sm ring-1 flex-shrink-0 cursor-pointer hover:scale-110 transition-transform ${isActive ? 'border-blue-500 ring-blue-300' : 'border-white ring-gray-200'}`} style={{ backgroundColor: c.hex || '#ccc' }} title={`${c.name} — click to view`} />
+                                    );
+                                  })}
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">{item.colorVariants.length} colours — click swatch</p>
+                              </div>
+                            )}
+                            {(item.images?.length > 1 || item.sizes?.length) && (
+                              <p className="text-xs text-gray-400 mb-2">{item.images?.length > 1 ? `${item.images.length} images • ` : ''}{item.sizes?.length ? `${item.sizes.length} sizes: ${item.sizes.slice(0,3).join(', ')}${item.sizes.length>3?'…':''}` : ''}</p>
+                            )}
                             
                             <div className="pt-3 border-t border-gray-100 flex flex-col gap-3">
                               <div className="flex items-center justify-between">
@@ -1188,7 +1237,8 @@ export default function EmployeeDashboard() {
                             </div>
                           </div>
                         </div>
-                      ))}
+                      );
+                      })}
                   </div>
                 )}
               </div>
@@ -1320,6 +1370,53 @@ export default function EmployeeDashboard() {
                     Export as PDF
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Colour Selection Modal for Apparels */}
+        {colorModalItem && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+              <div className="p-6 border-b border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900">Select Colours — {colorModalItem.name}</h3>
+                <p className="text-sm text-gray-500 mt-1">All colours selected by default. Uncheck to remove from PDF.</p>
+              </div>
+              <div className="p-4 flex justify-between items-center border-b border-gray-100 bg-gray-50">
+                <span className="text-sm font-medium text-gray-700">{selectedColorNames.size} of {colorModalItem.colorVariants?.length || 0} selected</span>
+                <div className="flex gap-2">
+                  <button onClick={() => setSelectedColorNames(new Set((colorModalItem.colorVariants || []).map((c:any)=>c.name)))} className="text-xs px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50">Select All</button>
+                  <button onClick={() => setSelectedColorNames(new Set())} className="text-xs px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50">Deselect All</button>
+                </div>
+              </div>
+              <div className="p-6 overflow-y-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {(colorModalItem.colorVariants || []).map((c: any) => {
+                    const isChecked = selectedColorNames.has(c.name);
+                    return (
+                      <label key={c.name} className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${isChecked ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                        <input type="checkbox" checked={isChecked} onChange={(e) => {
+                          const next = new Set(selectedColorNames);
+                          if (e.target.checked) next.add(c.name); else next.delete(c.name);
+                          setSelectedColorNames(next);
+                        }} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                        <div className="w-8 h-8 rounded-full border-2 border-white shadow-sm ring-1 ring-gray-200 flex-shrink-0" style={{ backgroundColor: c.hex || '#ccc' }} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate" title={c.name}>{c.name}</p>
+                          <p className="text-xs text-gray-500 truncate">{c.hex}</p>
+                        </div>
+                        {c.image && (
+                          <img src={c.image.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(c.image)}` : c.image} alt="" className="w-10 h-10 object-cover rounded border border-gray-200 flex-shrink-0" />
+                        )}
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="p-4 bg-gray-50 flex justify-end gap-2 border-t border-gray-100">
+                <button onClick={() => { setColorModalItem(null); setSelectedColorNames(new Set()); }} className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
+                <button onClick={confirmAddToCartWithColors} disabled={selectedColorNames.size === 0} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm ${selectedColorNames.size === 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>Add to Cart ({selectedColorNames.size})</button>
               </div>
             </div>
           </div>

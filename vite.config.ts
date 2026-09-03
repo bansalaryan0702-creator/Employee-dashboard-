@@ -12,6 +12,10 @@ export default defineConfig(({mode}) => {
         '@': path.resolve(__dirname, '.'),
       },
     },
-    server: {},
+    server: {
+      watch: {
+        ignored: ['**/local-db.json', '**/server.log', '**/dist/**', '**/node_modules/**', '**/tmp/**']
+      }
+    },
   };
 });

@@ -180,6 +180,7 @@ export async function downloadCartPdf(cartItems: any[], user: any, showBrandName
   let coverImg: HTMLImageElement | null = null;
   let lastPageImg: HTMLImageElement | null = null;
   const productImagesMap: { [key: string]: HTMLImageElement } = {};
+  const variantImagesMap: { [key: string]: HTMLImageElement } = {};
 
   const loadImage = (src: string, anonymous: boolean = true): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
@@ -268,10 +269,36 @@ export async function downloadCartPdf(cartItems: any[], user: any, showBrandName
       return Promise.resolve();
     });
 
+    // Preload apparel variant images
+    const variantPromises: Promise<void>[] = [];
+    cartItems.forEach((item) => {
+      if (item.category === 'Apparel' && item.colorVariants && Array.isArray(item.colorVariants)) {
+        const variantsToLoad = item.selectedColorVariants && item.selectedColorVariants.length > 0 ? item.selectedColorVariants : item.colorVariants;
+        variantsToLoad.forEach((v: any) => {
+          if (v.image && !variantImagesMap[v.image] && !productImagesMap[v.image]) {
+            const url = v.image.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(v.image)}` : v.image;
+            const key = v.image;
+            variantPromises.push(
+              loadImage(url).then(img => { variantImagesMap[key] = img; }).catch(()=>{})
+            );
+          }
+        });
+        // Also preload extra gallery images if any
+        if (item.images && Array.isArray(item.images)) {
+          item.images.slice(0, 6).forEach((imgUrl: string) => {
+            if (imgUrl && !variantImagesMap[imgUrl] && !productImagesMap[imgUrl]) {
+              const url = imgUrl.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(imgUrl)}` : imgUrl;
+              variantPromises.push(loadImage(url).then(img => { variantImagesMap[imgUrl] = img; }).catch(()=>{}));
+            }
+          });
+        }
+      }
+    });
+
     // Wait for everything with a timeout to avoid blocking forever
     await Promise.race([
-      Promise.all([logoPromise, coverPromise, lastPagePromise, ...productPromises]),
-      new Promise((resolve) => setTimeout(resolve, 6000)) // 6-second max wait
+      Promise.all([logoPromise, coverPromise, lastPagePromise, ...productPromises, ...variantPromises]),
+      new Promise((resolve) => setTimeout(resolve, 8000)) // 8-second max wait for variant images
     ]);
   } catch (error) {
     console.log('Error preloading images:', error);
@@ -485,17 +512,47 @@ export async function downloadCartPdf(cartItems: any[], user: any, showBrandName
       pageNum: currentPageNum
     });
 
-    const itemsPerPage = 1; // 1 product per page for professional layout
-
-    for (let i = 0; i < itemsInCategory.length; i += itemsPerPage) {
-      const chunk = itemsInCategory.slice(i, i + itemsPerPage);
-      catalogPages.push({
-        pageNum: currentPageNum,
-        categoryTitle: cat.toUpperCase(),
-        items: chunk,
-        layout: '2-per-page'
+    // Apparel with many colours: split into multiple pages (8 colours per page, same hero)
+    const isApparelCat = cat.toLowerCase() === 'apparel';
+    if (isApparelCat) {
+      itemsInCategory.forEach((item: any) => {
+        const variants = (item.selectedColorVariants && item.selectedColorVariants.length > 0 ? item.selectedColorVariants : (item.colorVariants || []));
+        if (variants.length > 8) {
+          const perPage = 8;
+          const chunks = Math.ceil(variants.length / perPage);
+          for (let c = 0; c < chunks; c++) {
+            const slice = variants.slice(c * perPage, (c + 1) * perPage);
+            const pagedItem = { ...item, _apparelChunk: slice, _apparelChunkIndex: c, _apparelTotalChunks: chunks, _apparelVariants: variants };
+            catalogPages.push({
+              pageNum: currentPageNum,
+              categoryTitle: cat.toUpperCase(),
+              items: [pagedItem],
+              layout: '2-per-page'
+            });
+            currentPageNum++;
+          }
+        } else {
+          catalogPages.push({
+            pageNum: currentPageNum,
+            categoryTitle: cat.toUpperCase(),
+            items: [item],
+            layout: '2-per-page'
+          });
+          currentPageNum++;
+        }
       });
-      currentPageNum++;
+    } else {
+      const itemsPerPage = 1;
+      for (let i = 0; i < itemsInCategory.length; i += itemsPerPage) {
+        const chunk = itemsInCategory.slice(i, i + itemsPerPage);
+        catalogPages.push({
+          pageNum: currentPageNum,
+          categoryTitle: cat.toUpperCase(),
+          items: chunk,
+          layout: '2-per-page'
+        });
+        currentPageNum++;
+      }
     }
   });
 
@@ -626,11 +683,137 @@ export async function downloadCartPdf(cartItems: any[], user: any, showBrandName
     });
   };
 
+  // Apparel helper: get image for variant
+  const getVariantImg = (imgUrl: string | undefined): HTMLImageElement | null => {
+    if (!imgUrl) return null;
+    return variantImagesMap[imgUrl] || productImagesMap[imgUrl] || variantImagesMap[imgUrl] || null;
+  };
+  const createCircularDataUrl = (img: HTMLImageElement): string | null => {
+    try {
+      const size = Math.min(img.width || 400, img.height || 400);
+      const canvas = document.createElement('canvas');
+      canvas.width = 400;
+      canvas.height = 400;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return null;
+      ctx.beginPath();
+      ctx.arc(200, 200, 195, 0, Math.PI * 2);
+      ctx.clip();
+      const scale = 400 / size;
+      const w = (img.width || 400) * scale;
+      const h = (img.height || 400) * scale;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0,0,400,400);
+      ctx.drawImage(img, (400 - w)/2, (400 - h)/2, w, h);
+      return canvas.toDataURL('image/jpeg', 0.92);
+    } catch { return null; }
+  };
+
   catalogPages.forEach((page) => {
     doc.addPage();
 
-    const item = page.items[0]; // First item on page (1 per page now)
+    const item = page.items[0];
     if (!item) return;
+    // Apparel-specific layout (Victory Polo style)
+    if (item.category === 'Apparel' && item.colorVariants && item.colorVariants.length > 0) {
+      // Simple apparel layout: big hero (smaller) + bigger colour grid + price - paginated after 8
+      const allVariants: any[] = (item as any)._apparelVariants || (item.selectedColorVariants && item.selectedColorVariants.length > 0 ? item.selectedColorVariants : (item.colorVariants || []));
+      const variantsToShow: any[] = (item as any)._apparelChunk || allVariants;
+      const chunkIndex: number = (item as any)._apparelChunkIndex || 0;
+      const totalChunks: number = (item as any)._apparelTotalChunks || 1;
+      const primary = allVariants[0] || variantsToShow[0] || item.colorVariants[0];
+      const primaryImg = getVariantImg(primary?.image || item.imageUrl) || productImagesMap[item.id] || null;
+      const primaryName = primary?.name || item.name;
+
+      // Page background white
+      doc.setFillColor(255,255,255);
+      doc.rect(0,0,210,297,'F');
+      // Header title
+      doc.setFont('Helvetica','bold'); doc.setFontSize(13); doc.setTextColor(20,20,20);
+      const apparelTitle = (item.brandName ? item.brandName + ' ' : '') + (item.name || 'APPAREL');
+      doc.text(apparelTitle.toUpperCase().substring(0,44), 105, 16, {align:'center'});
+      if (totalChunks > 1) {
+        doc.setFont('Helvetica','normal'); doc.setFontSize(7); doc.setTextColor(100,116,139);
+        doc.text(`Colours ${chunkIndex*8+1}-${chunkIndex*8+variantsToShow.length} of ${allVariants.length}`, 105, 21, {align:'center'});
+      } else {
+        doc.setFont('Helvetica','normal'); doc.setFontSize(7); doc.setTextColor(100,116,139);
+        if (item.description) {
+          const descLines = doc.splitTextToSize(item.description.substring(0,130), 175);
+          doc.text(descLines.slice(0,2), 105, 22, {align:'center'});
+        }
+      }
+      // Hero - thumbnail (not colour) as requested, smaller
+      const heroW=75, heroH=75, heroX=(210-heroW)/2, heroY=27;
+      const thumbnailImg = getVariantImg(item.imageUrl) || productImagesMap[item.id] || primaryImg;
+      doc.setFillColor(248,250,252);
+      doc.setDrawColor(226,232,240); doc.setLineWidth(0.4);
+      doc.roundedRect(heroX-3, heroY-3, heroW+6, heroH+6, 4,4,'FD');
+      if (thumbnailImg) {
+        try {
+          const ratio=(thumbnailImg.width||1)/(thumbnailImg.height||1);
+          let rw=heroW-8, rh=heroH-8;
+          if(ratio>heroW/heroH) rh=rw/ratio; else rw=rh*ratio;
+          const rx=heroX+(heroW-rw)/2, ry=heroY+(heroH-rh)/2;
+          doc.setFillColor(255,255,255);
+          doc.roundedRect(rx-1, ry-1, rw+2, rh+2, 2,2,'F');
+          doc.addImage(thumbnailImg,'JPEG',rx,ry,rw,rh,undefined,'MEDIUM');
+        } catch {}
+      } else {
+        drawCameraPlaceholder(heroX+heroW/2, heroY+heroH/2, primaryName);
+      }
+      // Hero label shows product name, not colour
+      doc.setFont('Helvetica','bold'); doc.setFontSize(7); doc.setTextColor(45,31,102);
+      doc.text((item.name || primaryName).toUpperCase().substring(0,32), 105, heroY+heroH+8, {align:'center'});
+      // Colour grid - bigger thumbs as requested
+      const gridTitleY= heroY+heroH+18;
+      doc.setFont('Helvetica','bold'); doc.setFontSize(9); doc.setTextColor(30,41,59);
+      doc.text(`AVAILABLE COLOURS (${variantsToShow.length}${totalChunks>1 ? ' - Page '+(chunkIndex+1) : ''})`, 15, gridTitleY);
+      doc.setDrawColor(226,232,240); doc.setLineWidth(0.3); doc.line(15, gridTitleY+3, 195, gridTitleY+3);
+      // Dynamic sizing: fewer colours -> larger images
+      const n = variantsToShow.length;
+      let thumbW, thumbH, gap, cols;
+      if (n === 1) { thumbW=90; thumbH=110; gap=0; cols=1; }
+      else if (n === 2) { thumbW=80; thumbH=105; gap=12; cols=2; }
+      else if (n === 3) { thumbW=56; thumbH=78; gap=8; cols=3; }
+      else if (n === 4) { thumbW=42; thumbH=68; gap=6; cols=4; }
+      else if (n <= 6) { thumbW=54; thumbH=72; gap=6; cols=3; }
+      else { thumbW=42; thumbH=60; gap=4; cols=4; }
+      let gridStartY= gridTitleY+10;
+      variantsToShow.forEach((v:any, idx:number)=>{
+        const col=idx%cols, row=Math.floor(idx/cols);
+        const bx=15+col*(thumbW+gap), by=gridStartY+row*(thumbH+10);
+        // Ensure not below price area - with 8 per page (2 rows) max, by will be <= 10+ 1*68=78+gridStartY ~ 144+68=212, safe
+        // No box - bg removal, just image on white
+        const vImg=getVariantImg(v.image) || primaryImg;
+        if (vImg) {
+          try {
+            const ratio=(vImg.width||1)/(vImg.height||1);
+            let rw=thumbW-1, rh=thumbH-1;
+            if(ratio>thumbW/thumbH) rh=rw/ratio; else rw=rh*ratio;
+            const rx=bx+(thumbW-rw)/2, ry=by+(thumbH-rh)/2;
+            // white bg already, bg removal effect
+            doc.addImage(vImg,'JPEG',rx,ry,rw,rh,undefined,'MEDIUM');
+          } catch {}
+        }
+        doc.setFont('Helvetica','normal'); doc.setFontSize(5); doc.setTextColor(60,60,60);
+        const nl=doc.splitTextToSize(v.name, thumbW);
+        doc.text(nl[0].substring(0,18), bx+thumbW/2, by+thumbH+5, {align:'center'});
+      });
+      // Price at end - no decorative line above (removed as requested), just price
+      const priceVal = typeof item.sellingPrice==='number'?item.sellingPrice:(item.price||0);
+      doc.setFont('Helvetica','bold'); doc.setFontSize(12); doc.setTextColor(0,0,0);
+      const priceText = `PRICE - ${priceVal} + ${item.gstRate||5}% GST`;
+      // Place price safely below grid, ensure not overlapping
+      const rows = Math.ceil(variantsToShow.length / cols);
+      const gridEndY = gridStartY + rows*(thumbH+10) + (rows>0?4:0);
+      // Price moved up to avoid clash, placed just below grid
+      const priceY = Math.min(270, Math.max(250, gridEndY + 12));
+      doc.text(priceText, 105, priceY, {align:'center'});
+      doc.setFont('Helvetica','normal'); doc.setFontSize(6); doc.setTextColor(120,120,120);
+      doc.text(`PrintField  |  aryan@printfield.in  |  +91-9606371222`,105,290,{align:'center'});
+      doc.text(`Page ${page.pageNum}`,195,290,{align:'right'});
+      return;
+    }
 
     // ===== FULL PAGE BACKGROUND =====
     doc.setFillColor(WARM_BG[0], WARM_BG[1], WARM_BG[2]);

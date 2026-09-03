@@ -14,7 +14,10 @@ type CatalogueItem = {
   gstRate?: number;
   category: string;
   imageUrl?: string;
+  images?: string[];
+  colorVariants?: { name: string; hex: string; image: string }[];
   sizes?: string[];
+  colors?: string[];
 };
 
 export default function CataloguePortal() {
@@ -22,6 +25,8 @@ export default function CataloguePortal() {
   const [items, setItems] = useState<CatalogueItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<CatalogueItem[]>([]);
+  const [activeImages, setActiveImages] = useState<Record<string, string>>({});
+  const [activeColorNames, setActiveColorNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const loadCatalogue = async () => {
@@ -107,15 +112,32 @@ export default function CataloguePortal() {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredItems.map((item) => (
+          {filteredItems.map((item) => {
+            const displayImage = activeImages[item.id] || item.imageUrl;
+            const displayColor = activeColorNames[item.id];
+            return (
             <div key={item.id} className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-              <div className="h-48 bg-slate-100 flex items-center justify-center">
-                {item.imageUrl ? (
-                  <img src={item.imageUrl?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` : item.imageUrl} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
+              <div className="h-48 bg-slate-100 flex items-center justify-center relative">
+                {displayImage ? (
+                  <img src={displayImage?.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(displayImage)}` : displayImage} alt={item.brandName ? `${item.brandName} ${item.name}` : item.name} className="w-full h-full object-cover" />
                 ) : (
                   <Box className="w-12 h-12 text-slate-300" />
                 )}
+                {displayColor && (
+                  <span className="absolute bottom-2 left-2 bg-slate-900/80 text-white text-xs px-2 py-1 rounded">{displayColor}</span>
+                )}
               </div>
+              {item.images && item.images.length > 1 && (
+                <div className="flex gap-1 p-2 bg-slate-50 border-b border-slate-100 overflow-x-auto">
+                  {item.images.slice(0, 6).map((img: string, idx: number) => {
+                    const isActive = displayImage === img;
+                    return (
+                      <img key={idx} onClick={() => { setActiveImages(prev=>({...prev,[item.id]:img})); setActiveColorNames(prev=>({...prev,[item.id]:''})); }} src={img.startsWith('http') ? `/api/proxy-image?url=${encodeURIComponent(img)}` : img} alt="" className={`w-12 h-12 object-cover rounded border flex-shrink-0 cursor-pointer ${isActive ? 'border-blue-500 ring-2 ring-blue-200' : 'border-slate-200'}`} />
+                    );
+                  })}
+                  {item.images.length > 6 && <span className="text-xs text-slate-500 self-center">+{item.images.length - 6}</span>}
+                </div>
+              )}
               <div className="p-4 flex flex-col flex-grow">
                 <div className="flex justify-between items-start">
                   <h3 className="font-semibold text-lg text-slate-900 line-clamp-1">{item.brandName ? `${item.brandName} ${item.name}` : item.name}</h3>
@@ -123,7 +145,23 @@ export default function CataloguePortal() {
                     {item.category}
                   </span>
                 </div>
-                <p className="text-slate-500 text-sm mt-1 mb-4 flex-grow line-clamp-2">{item.description}</p>
+                <p className="text-slate-500 text-sm mt-1 mb-2 flex-grow line-clamp-2">{item.description}</p>
+                {item.colorVariants && item.colorVariants.length > 0 && (
+                  <div className="mb-3">
+                    <div className="flex flex-wrap gap-1.5">
+                      {item.colorVariants.map((c: any, i: number) => {
+                        const isActive = displayColor === c.name;
+                        return (
+                          <button key={i} onClick={() => { if(c.image){ setActiveImages(prev=>({...prev,[item.id]:c.image})); setActiveColorNames(prev=>({...prev,[item.id]:c.name})); } }} className={`w-7 h-7 rounded-full border-2 shadow-sm ring-1 flex-shrink-0 cursor-pointer hover:scale-110 transition-transform ${isActive ? 'border-blue-500 ring-blue-300' : 'border-white ring-slate-200'}`} style={{ backgroundColor: c.hex || '#ccc' }} title={`${c.name} — click to view`} />
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1.5">{item.colorVariants.length} colours — click swatch to view</p>
+                  </div>
+                )}
+                {item.images && item.images.length > 1 && (
+                  <p className="text-xs text-slate-400 mb-3">{item.images.length} images • {item.sizes?.length ? `${item.sizes.length} sizes` : ''}</p>
+                )}
                 <div className="mt-auto flex justify-between items-center">
                   <div className="flex flex-col text-left">
                     <span className="text-xs text-slate-500 flex items-center">
@@ -144,7 +182,8 @@ export default function CataloguePortal() {
                 </div>
               </div>
             </div>
-          ))}
+          );
+          })}
 
           {filteredItems.length === 0 && (
             <div className="col-span-full py-12 text-center bg-white border border-slate-200 rounded-lg border-dashed">

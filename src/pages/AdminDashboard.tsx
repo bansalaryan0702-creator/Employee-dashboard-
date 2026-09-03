@@ -8,6 +8,7 @@ import EditTicketModal from '../components/EditTicketModal';
 import { downloadTicketPdf } from '../utils/generatePdf';
 import CatalogueCreator from './CatalogueCreator';
 import BulkEmailSender from '../components/BulkEmailSender';
+import MasterPriceManager from './MasterPriceManager';
 
 type UserData = { id: string, username: string, password?: string, role?: string };
 type Ticket = {
@@ -28,7 +29,7 @@ type Ticket = {
 };
 
 interface AdminDashboardProps {
-  initialTab?: 'dashboard' | 'employees' | 'products' | 'catalogue-creator' | 'emails';
+  initialTab?: 'dashboard' | 'employees' | 'products' | 'catalogue-creator' | 'emails' | 'master-price';
 }
 
 export default function AdminDashboard({ initialTab = 'dashboard' }: AdminDashboardProps) {
@@ -41,7 +42,7 @@ export default function AdminDashboard({ initialTab = 'dashboard' }: AdminDashbo
   const [createMsg, setCreateMsg] = useState({ text: '', type: '' });
   const [search, setSearch] = useState('');
   const [searchDate, setSearchDate] = useState('');
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'employees' | 'products' | 'catalogue-creator' | 'emails'>(() => {
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'employees' | 'products' | 'catalogue-creator' | 'emails' | 'master-price'>(() => {
     return (sessionStorage.getItem('admin_active_tab') as any) || initialTab;
   });
 
@@ -394,6 +395,16 @@ export default function AdminDashboard({ initialTab = 'dashboard' }: AdminDashbo
             }`}
           >
             Catalogue Creator
+          </button>
+          <button
+            onClick={() => setActiveTab('master-price')}
+            className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+              activeTab === 'master-price'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200'
+            }`}
+          >
+            Master Price
           </button>
           <button
             onClick={() => setActiveTab('emails')}
@@ -900,6 +911,11 @@ export default function AdminDashboard({ initialTab = 'dashboard' }: AdminDashbo
         {activeTab === 'catalogue-creator' && (
           <div className="w-full">
             <CatalogueCreator isEmbedded={true} />
+          </div>
+        )}
+        {activeTab === 'master-price' && (
+          <div className="w-full">
+            <MasterPriceManager isEmbedded={true} />
           </div>
         )}
         {activeTab === 'emails' && (

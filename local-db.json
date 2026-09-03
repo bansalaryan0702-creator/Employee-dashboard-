@@ -1,118 +1,2301 @@
 {
-    "users":  [
-                  {
-                      "id":  "admin",
-                      "username":  "admin",
-                      "password":  "password123",
-                      "role":  "admin"
-                  },
-                  {
-                      "username":  "Aryan",
-                      "role":  "employee",
-                      "id":  "aryan",
-                      "password":  "password123"
-                  }
-              ],
-    "tickets":  [
-
-                ],
-    "products":  [
-                     "Colour Printout 18%",
-                     "Billbook 1+1 A/5size",
-                     "Billbook 1+1 A/4 size",
-                     "billbook A/4 1+1",
-                     "carbon less book 1+2",
-                     "register printed 200 pages",
-                     "register printed 300 pages",
-                     "reciept book 1+1",
-                     "color printouts A/3",
-                     "color printouts A/4",
-                     "color printouts A/5",
-                     "color printouts 4x6\"",
-                     "frame gold",
-                     "frame black",
-                     "danglers",
-                     "tent cards",
-                     "sticker A/3",
-                     "sticker A/3 with half cut",
-                     "sticker A/3 PVC",
-                     "2 wheeler sticker",
-                     "4 wheeler sticker",
-                     "standee 3ftx6ft",
-                     "standee 3ftx5ft",
-                     "standee Luxury 3Ft x6Ft",
-                     "Promotable",
-                     "Flyers A/5 size",
-                     "Flyers A/4 size",
-                     "Flyers A/3 size",
-                     "Id cards PVC",
-                     "Id cards Normal",
-                     "lamination A/4",
-                     "lamination A/3",
-                     "Spiralbinding",
-                     "wiro binding",
-                     "lanyards",
-                     "Business cards",
-                     "letterheads",
-                     "Envelopes A/4",
-                     "Envelopes small",
-                     "Cloth envelope",
-                     "paper bags",
-                     "Spring files",
-                     "SelfInk Stamp",
-                     "Star Flex",
-                     "Normal flex",
-                     "Non tearble Vinyl",
-                     "Post Cards",
-                     "Invitation cards",
-                     "Wedding Cards",
-                     "IdCard Holders",
-                     "yoyo clips round",
-                     "yoyo clips Oval",
-                     "Certificates",
-                     "Trophies Crystal",
-                     "Trophies Wooden",
-                     "Trophies Acyrlic",
-                     "Vinyl Posters",
-                     "Jute Bags",
-                     "Mugs",
-                     "Badges Metal",
-                     "Note book",
-                     "Dairies",
-                     "Paper folders with Pouch",
-                     "Book Marks",
-                     "key chains",
-                     "Sunboard 3MM",
-                     "Sunboard 5MM",
-                     "ACP board",
-                     "Acyrlic Board",
-                     "Name paltes",
-                     "Plastic Pouches",
-                     "Hoodies",
-                     "Jackets",
-                     "Electronic gadgets",
-                     "Power banks",
-                     "Sipper bottles",
-                     "Joining Kit",
-                     "Sunpack"
-                 ],
-    "customers":  [
-
-                  ],
-    "vendors":  [
-
-                ],
-    "catalogueItems":  [
-
-                       ],
-    "categories":  [
-                       "Mugs",
-                       "T-Shirts",
-                       "Notebooks",
-                       "Water Bottles",
-                       "Business Cards",
-                       "Flyers",
-                       "Posters",
-                       "Banners"
-                   ]
+  "users": [
+    {
+      "id": "admin",
+      "username": "admin",
+      "password": "password123",
+      "role": "admin"
+    },
+    {
+      "username": "Aryan",
+      "role": "employee",
+      "id": "aryan",
+      "password": "password123"
+    }
+  ],
+  "tickets": [],
+  "products": [
+    "Colour Printout 18%",
+    "Billbook 1+1 A/5size",
+    "Billbook 1+1 A/4 size",
+    "billbook A/4 1+1",
+    "carbon less book 1+2",
+    "register printed 200 pages",
+    "register printed 300 pages",
+    "reciept book 1+1",
+    "color printouts A/3",
+    "color printouts A/4",
+    "color printouts A/5",
+    "color printouts 4x6\"",
+    "frame gold",
+    "frame black",
+    "danglers",
+    "tent cards",
+    "sticker A/3",
+    "sticker A/3 with half cut",
+    "sticker A/3 PVC",
+    "2 wheeler sticker",
+    "4 wheeler sticker",
+    "standee 3ftx6ft",
+    "standee 3ftx5ft",
+    "standee Luxury 3Ft x6Ft",
+    "Promotable",
+    "Flyers A/5 size",
+    "Flyers A/4 size",
+    "Flyers A/3 size",
+    "Id cards PVC",
+    "Id cards Normal",
+    "lamination A/4",
+    "lamination A/3",
+    "Spiralbinding",
+    "wiro binding",
+    "lanyards",
+    "Business cards",
+    "letterheads",
+    "Envelopes A/4",
+    "Envelopes small",
+    "Cloth envelope",
+    "paper bags",
+    "Spring files",
+    "SelfInk Stamp",
+    "Star Flex",
+    "Normal flex",
+    "Non tearble Vinyl",
+    "Post Cards",
+    "Invitation cards",
+    "Wedding Cards",
+    "IdCard Holders",
+    "yoyo clips round",
+    "yoyo clips Oval",
+    "Certificates",
+    "Trophies Crystal",
+    "Trophies Wooden",
+    "Trophies Acyrlic",
+    "Vinyl Posters",
+    "Jute Bags",
+    "Mugs",
+    "Badges Metal",
+    "Note book",
+    "Dairies",
+    "Paper folders with Pouch",
+    "Book Marks",
+    "key chains",
+    "Sunboard 3MM",
+    "Sunboard 5MM",
+    "ACP board",
+    "Acyrlic Board",
+    "Name paltes",
+    "Plastic Pouches",
+    "Hoodies",
+    "Jackets",
+    "Electronic gadgets",
+    "Power banks",
+    "Sipper bottles",
+    "Joining Kit",
+    "Sunpack"
+  ],
+  "customers": [],
+  "vendors": [],
+  "catalogueItems": [
+    {
+      "id": "96cd177b-5d18-43b4-9b87-3649fe7dc9de",
+      "brandName": "Swiss",
+      "name": "Swiss Military Dynamic Dry Fit T-shirt",
+      "description": "Experience breathable comfort and smart everyday style with this men’s dry-fit collar T-shirt, crafted from premium 100% polyester fabric for all-day performance. Designed with anti-microbial moisture management, stretchable collar and sleeve rib, and a soft handfeel, it offers a polished look with maximum comfort. Material: 100% Polyester Premium Fabric, 200 GSM Fit: Smart fit with stretchable collar and sleeve rib Comfort Features: Anti-microbial fabric, moisture management, ultra-soft hand feel Print Area: 3.5 inch Front Area Personalisation: Front Customisation Offered Style: Ideal for active and casual wear",
+      "price": 400,
+      "purchasePrice": 0,
+      "sellingPrice": 400,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/72258f2a-558e-48ca-bcd7-b89f2bcada1b/variant/1782887910464-qdfb3n.png",
+      "subCategory": "Round Neck T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/72258f2a-558e-48ca-bcd7-b89f2bcada1b/variant/1782887910464-qdfb3n.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/72258f2a-558e-48ca-bcd7-b89f2bcada1b/variant/1782887913204-8aos3t.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Purple",
+          "hex": "#401b6f",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/72258f2a-558e-48ca-bcd7-b89f2bcada1b/variant/1782887910464-qdfb3n.png"
+        },
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/72258f2a-558e-48ca-bcd7-b89f2bcada1b/variant/1782887913204-8aos3t.png"
+        }
+      ],
+      "colors": [
+        "Purple",
+        "Black"
+      ]
+    },
+    {
+      "id": "9a0900a0-0bff-4cd0-acaf-ed504faa932b",
+      "brandName": "Scott",
+      "name": "Scott Organic Polo T-Shirt Men",
+      "description": "Experience the perfect blend of ease and professionalism with the Scott Organic Polo, expertly tailored from top-tier cotton for both office environments and relaxed outings. Material: 100% Pure Cotton Fit: Standard Fit designed for all-day wearability Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Sizes Available: S, M, L, XL, XXL",
+      "price": 650,
+      "purchasePrice": 0,
+      "sellingPrice": 650,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Royal Blue With White Tipping",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Electric Green With White Tipping",
+          "hex": "#00f900",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "White With Red Tipping",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Apple Green with White Tipping",
+          "hex": "#77bb41",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Maroon with white Tipping",
+          "hex": "#5c0700",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Grey Melange With Black Tipping",
+          "hex": "#919191",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "White With Royal Blue Tipping",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Red With White Tipping",
+          "hex": "#ff2600",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Cream With Red Tipping",
+          "hex": "#ffd9a8",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Turquoise Green With White Tipping",
+          "hex": "#00fdea",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Military With White Tipping",
+          "hex": "#38571a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Electric Blue With White Tipping",
+          "hex": "#0061ff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Black With Royal Blue Tipping",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Turquoise Blue With White Tipping",
+          "hex": "#00c2f3",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Coffee Brown With Cream Tipping",
+          "hex": "#553d00",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Beige With Coffee Brown Tipping",
+          "hex": "#ffecd5",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Purple With White Tipping",
+          "hex": "#7b219f",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Charcoal Melange With White Tipping",
+          "hex": "#232323",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Golden Yellow With Black Tipping",
+          "hex": "#f5ec00",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Grey Melange",
+          "hex": "#7a7a7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Black With White Tipping",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Bottle Green With White Tipping",
+          "hex": "#033815",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Indian Blue With Black Tipping",
+          "hex": "#0056d6",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        },
+        {
+          "name": "Black With Red Tipping",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/83a8dde4-e431-4e93-9bfe-5b0249b22bb3/featured/1782313636491-21yhtf.png"
+        }
+      ],
+      "colors": [
+        "Royal Blue With White Tipping",
+        "Electric Green With White Tipping",
+        "White With Red Tipping",
+        "Navy Blue",
+        "Apple Green with White Tipping",
+        "Maroon with white Tipping",
+        "Grey Melange With Black Tipping",
+        "White With Royal Blue Tipping",
+        "Red With White Tipping",
+        "Cream With Red Tipping",
+        "Turquoise Green With White Tipping",
+        "Military With White Tipping",
+        "Electric Blue With White Tipping",
+        "Black With Royal Blue Tipping",
+        "Turquoise Blue With White Tipping",
+        "Coffee Brown With Cream Tipping",
+        "Beige With Coffee Brown Tipping",
+        "Purple With White Tipping",
+        "Charcoal Melange With White Tipping",
+        "Black",
+        "Golden Yellow With Black Tipping",
+        "Grey Melange",
+        "White",
+        "Black With White Tipping",
+        "Bottle Green With White Tipping",
+        "Indian Blue With Black Tipping",
+        "Black With Red Tipping"
+      ]
+    },
+    {
+      "id": "bb4017a1-a499-4100-bf69-2f4a8058e889",
+      "brandName": "Swiss",
+      "name": "Swiss Military Dynamic Zipper Jacket With Hood",
+      "description": "Upgrade your wardrobe with this sleek black Swiss Military dynamic zipper jacket featuring a sturdy metal zipper, hood, and convenient patch pockets. Crafted from premium full knit fabric, it offers a regular fit for ultimate comfort and style. Get this premium jacket custom-branded with your logo at Printfield, Whitefield Bangalore.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/107e502f-d993-421b-b153-d8c1ffd3c432/featured/1782802864904-ht705r.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/107e502f-d993-421b-b153-d8c1ffd3c432/featured/1782802864904-ht705r.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/107e502f-d993-421b-b153-d8c1ffd3c432/featured/1782802864904-ht705r.png"
+        }
+      ],
+      "colors": [
+        "Black"
+      ]
+    },
+    {
+      "id": "eb65d7df-5cba-4876-b70a-812734811eff",
+      "brandName": "Wildcraft",
+      "name": "Wildcraft Husky Zippered jacket",
+      "description": "Stay ready for changing weather and everyday comfort with this lightweight jacket, designed to be compressible, windproof, and water-repellent. Comfort: Compressible and lightweight for easy packing and all-day wear. Protection: Windproof and water-repellent features help you stay comfortable in variable conditions. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style Use: Ideal for travel, outdoor wear, and versatile layering.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/fe14d793-860f-4965-8598-2a6719aa452e/variant/1782803958192-cncncs.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/fe14d793-860f-4965-8598-2a6719aa452e/variant/1782803958192-cncncs.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/fe14d793-860f-4965-8598-2a6719aa452e/variant/1782803960689-ha3ylu.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/fe14d793-860f-4965-8598-2a6719aa452e/variant/1782803958192-cncncs.png"
+        },
+        {
+          "name": "Olive Green",
+          "hex": "#b8c288",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/fe14d793-860f-4965-8598-2a6719aa452e/variant/1782803960689-ha3ylu.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Olive Green"
+      ]
+    },
+    {
+      "id": "e3a73a6a-6b2e-42db-8e4f-7039740f336f",
+      "brandName": "Swiss",
+      "name": "Swiss Military Dynamic Round Neck T-shirt",
+      "description": "Experience everyday comfort and sporty style with this men’s round neck T-shirt, crafted from premium 100% cotton for a soft, breathable feel. Designed for durability and all-day wear. Material: Premium 100% Cotton, 180 GSM Fit: Regular fit for comfortable daily wear Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Comfort Features: Industrial bio-wash, breathable cotton-poly blend feel, knitted neck tape",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828836194-k18cmv.png",
+      "subCategory": "Round Neck T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828836194-k18cmv.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828839164-fi728e.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828841313-6sr9nz.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828843477-5ucs52.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828845515-mcakka.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828847559-rafb80.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828849816-dlam07.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828851865-67ibfj.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828853912-y3nspb.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828856059-r7m6gm.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828836194-k18cmv.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828839164-fi728e.png"
+        },
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828841313-6sr9nz.png"
+        },
+        {
+          "name": "Royal Blue",
+          "hex": "#2962a3",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828843477-5ucs52.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828845515-mcakka.png"
+        },
+        {
+          "name": "Light Yellow",
+          "hex": "#debe1b",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828847559-rafb80.png"
+        },
+        {
+          "name": "Grey Melange",
+          "hex": "#7a7a7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828849816-dlam07.png"
+        },
+        {
+          "name": "Charcoal Melange",
+          "hex": "#282a2a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828851865-67ibfj.png"
+        },
+        {
+          "name": "Orange",
+          "hex": "#e36520",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828853912-y3nspb.png"
+        },
+        {
+          "name": "Forest Green",
+          "hex": "#466365",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/ef3e51dc-3e39-4800-9db0-cfbf85a6c209/variant/1782828856059-r7m6gm.png"
+        }
+      ],
+      "colors": [
+        "Navy Blue",
+        "White",
+        "Black",
+        "Royal Blue",
+        "Red",
+        "Light Yellow",
+        "Grey Melange",
+        "Charcoal Melange",
+        "Orange",
+        "Forest Green"
+      ]
+    },
+    {
+      "id": "8e34f7d3-4bd3-4573-87ab-58e49dcc2e7b",
+      "brandName": "Alcis",
+      "name": "Alcis Victory premium Polo Tshirt",
+      "description": "Introducing the Victory Polo, an all-utility classic pique shirt designed to look incredibly sharp whether you're at work, enjoying a casual brunch, or pairing it with a suit for evening cocktails. Material: 60% Cotton / 40% Polyester Blend (230G/M2) Fabric Care: Compacted Pre-Shrunk Fabric, Soft Flow Dyed for Guaranteed Colour Fastness Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Placket Style: 3-Button Placket with bottom box stitch, featuring a stylish Contrast Inner Button Placket and Dyed-to-Match Buttons Collar &amp; Sleeves: Heavy Duty Ribbed Collar paired with Lycra Ribs Construction: Double Needle Stitch on Shoulder &amp; Sleeves with Side Slits for added durability and movement",
+      "price": 799,
+      "purchasePrice": 0,
+      "sellingPrice": 799,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/50a116ff-7411-4b54-a220-c1fee7d473dd/variant/1782464659592-7ut1yo.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/50a116ff-7411-4b54-a220-c1fee7d473dd/variant/1782464659592-7ut1yo.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/50a116ff-7411-4b54-a220-c1fee7d473dd/variant/1782464662549-gvhlt2.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/50a116ff-7411-4b54-a220-c1fee7d473dd/variant/1782464665722-n8pvhg.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/50a116ff-7411-4b54-a220-c1fee7d473dd/variant/1782464659592-7ut1yo.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/50a116ff-7411-4b54-a220-c1fee7d473dd/variant/1782464662549-gvhlt2.png"
+        },
+        {
+          "name": "Royal Blue",
+          "hex": "#2962a3",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/50a116ff-7411-4b54-a220-c1fee7d473dd/variant/1782464665722-n8pvhg.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "White",
+        "Royal Blue"
+      ]
+    },
+    {
+      "id": "374ea3a9-f996-445f-ac57-394030ae9330",
+      "brandName": "Puma",
+      "name": "Puma Ess Archive Polo T-shirt",
+      "description": "Experience the perfect blend of ease and professionalism with this Classic Pique Polo, expertly tailored from a premium cotton-poly blend for both office environments and relaxed outings. Material: 60% Cotton, 40% Polyester (220 GSM Circular Knitted Pique) Fit: Standard Fit designed for all-day wearability Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Sizes Available: S, M, L, XL, XXL, XXXL",
+      "price": 999,
+      "purchasePrice": 0,
+      "sellingPrice": 999,
+      "gstRate": 5,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467552707-5k9jja.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467552707-5k9jja.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467555560-9qn49p.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467558285-2dmqva.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467561896-5fsds6.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467565186-clyx4x.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467552707-5k9jja.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467555560-9qn49p.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467558285-2dmqva.png"
+        },
+        {
+          "name": "Peacoat",
+          "hex": "#24263a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467561896-5fsds6.png"
+        },
+        {
+          "name": "M.Grey Heather",
+          "hex": "#abb1b4",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/f9ed6532-8081-4dc3-9b6f-124938bd8baa/variant/1782467565186-clyx4x.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "White",
+        "Red",
+        "Peacoat",
+        "M.Grey Heather"
+      ]
+    },
+    {
+      "id": "c0e55aaa-5035-43f1-8015-e99ca921968b",
+      "brandName": "WildCraft",
+      "name": "WildCraft Light Quilt Zippered Jacket",
+      "description": "Experience practical comfort and all-weather versatility with this lightweight jacket, made to be compressible, windproof, and water-repellent. Comfort: Compressible and lightweight for easy packing and all-day wear. Protection: Windproof and water-repellent features help you stay comfortable in variable conditions. Warmth: Handwarmer pockets add extra convenience and cozy utility. Style Use: Ideal for travel, outdoor wear, and versatile layering. Performance: Built for practical use without adding bulk.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/c6e50ae9-5aba-4d64-9a82-34ccec3554a2/variant/1782805246735-562oad.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/c6e50ae9-5aba-4d64-9a82-34ccec3554a2/variant/1782805246735-562oad.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/c6e50ae9-5aba-4d64-9a82-34ccec3554a2/variant/1782805249807-qsomy8.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/c6e50ae9-5aba-4d64-9a82-34ccec3554a2/variant/1782805246735-562oad.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/c6e50ae9-5aba-4d64-9a82-34ccec3554a2/variant/1782805249807-qsomy8.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Navy Blue"
+      ]
+    },
+    {
+      "id": "df3d45f7-c2c8-48df-b929-f32b4076d6e9",
+      "brandName": "Puma",
+      "name": "Puma Dry Cell Ess Tee",
+      "description": "Experience lightweight comfort and sporty style with this 100% polyester interlock T-shirt, designed for everyday wear and active movement. Material: 100% Polyester Interlock, 160 GSM Fit: Comfortable regular fit Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style: Breathable and durable for daily use and casual outings",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886773607-vuly60.png",
+      "subCategory": "Round Neck T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886773607-vuly60.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886777148-lgyrwo.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886780608-hyg02i.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886783112-bl5gwb.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886785185-nonq0z.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886773607-vuly60.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886777148-lgyrwo.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886780608-hyg02i.png"
+        },
+        {
+          "name": "Peacoat",
+          "hex": "#24263a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886783112-bl5gwb.png"
+        },
+        {
+          "name": "Sodalite Blue",
+          "hex": "#0056d6",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/64e93576-519a-4f01-a378-9f17b40b8a4e/variant/1782886785185-nonq0z.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "White",
+        "Red",
+        "Peacoat",
+        "Sodalite Blue"
+      ]
+    },
+    {
+      "id": "86458dd1-2463-4847-87ef-bd2c0457e5dd",
+      "brandName": "Swiss",
+      "name": "Swiss Military Supreme Polo T-shirt",
+      "description": "Elevate your everyday style with the Supreme Grey Polo, meticulously crafted from premium bio-washed combed cotton to deliver an exceptionally soft hand-feel alongside a smart, comfortable fit. Material: 100% Premium Combed Cotton (230-240 GSM) Fit: Men's Regular Fit featuring a stretchable collar and sleeve rib Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Finish: Industrial Bio-wash for superior softness Key Details: SM logo embossed buttons, self-material placket, and bottom hem slits for comfortable wearing Branding &amp; Labels: HD Swiss cross logo on yoke and printed wash care label Sizes Available: XS, S, M, L, XL, XXL, XXXL",
+      "price": 999,
+      "purchasePrice": 0,
+      "sellingPrice": 999,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461124519-6c2il1.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461124519-6c2il1.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461126264-6iw21p.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461127693-rt1ppg.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461128717-gyki0h.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461129846-a1oazo.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461130866-u5n5bk.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461132309-0o1d8d.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461133222-2l44xq.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461124519-6c2il1.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461126264-6iw21p.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461127693-rt1ppg.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461128717-gyki0h.png"
+        },
+        {
+          "name": "Blue",
+          "hex": "#4061a1",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461129846-a1oazo.png"
+        },
+        {
+          "name": "Grey",
+          "hex": "#747270",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461130866-u5n5bk.png"
+        },
+        {
+          "name": "Purple",
+          "hex": "#401b6f",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461132309-0o1d8d.png"
+        },
+        {
+          "name": "Sea Green",
+          "hex": "#90a595",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d84cbe28-ca6f-4b32-8a53-488b2a0e487f/variant/1782461133222-2l44xq.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "White",
+        "Navy Blue",
+        "Red",
+        "Blue",
+        "Grey",
+        "Purple",
+        "Sea Green"
+      ]
+    },
+    {
+      "id": "b5160bed-bb0f-46a4-9ea2-7d2098a5c940",
+      "brandName": "Puma",
+      "name": "Puma Poly Polo T-shirt",
+      "description": "Experience lightweight comfort and clean everyday style with this 100% polyester poplin T-shirt, designed for a smooth feel and versatile wear. The white color and regular fit make it a smart choice for casual outings and daily comfort. Material: 100% Polyester Poplin Fit: Regular fit for everyday wearability Print Area: 3.5 inch Front Area Personalisation: Front Customisation Offered Style: Lightweight, durable, and comfortable for casual use",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1adec005-8223-41c6-a9f9-69a9d65e7f09/variant/1782887366728-izj83x.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1adec005-8223-41c6-a9f9-69a9d65e7f09/variant/1782887366728-izj83x.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1adec005-8223-41c6-a9f9-69a9d65e7f09/variant/1782887370041-myuqe5.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1adec005-8223-41c6-a9f9-69a9d65e7f09/variant/1782887372126-4y7sjj.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1adec005-8223-41c6-a9f9-69a9d65e7f09/variant/1782887366728-izj83x.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1adec005-8223-41c6-a9f9-69a9d65e7f09/variant/1782887370041-myuqe5.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1adec005-8223-41c6-a9f9-69a9d65e7f09/variant/1782887372126-4y7sjj.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Navy Blue",
+        "White"
+      ]
+    },
+    {
+      "id": "3e036b12-03eb-4e39-943a-d46b5b6971de",
+      "brandName": "Puma",
+      "name": "Puma Knitted Sweatshirt",
+      "description": "Experience the perfect blend of warmth, comfort, and everyday style with this French terry sweatshirt, made from a soft cotton-poly blend for a relaxed and durable fit. Material: Crafted from 70% cotton and 30% polyester French terry fabric with a 280 GSM build. Fit: Designed for a comfortable regular fit that works well for all-day wear. Comfort: Soft French terry texture offers warmth, breathability, and easy layering. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style Use: Ideal for casual wear, travel, layering, and relaxed everyday outfits.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/b7fdb6f2-819a-4af8-a8e0-4e8a4db6ae08/variant/1782748005887-ymy8vd.png",
+      "subCategory": "Hoodies & Sweatshirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/b7fdb6f2-819a-4af8-a8e0-4e8a4db6ae08/variant/1782748005887-ymy8vd.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/b7fdb6f2-819a-4af8-a8e0-4e8a4db6ae08/variant/1782748006668-0myh6f.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/b7fdb6f2-819a-4af8-a8e0-4e8a4db6ae08/variant/1782748000840-jdb7lc.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "M.Grey Heather",
+          "hex": "#abb1b4",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/b7fdb6f2-819a-4af8-a8e0-4e8a4db6ae08/variant/1782748005887-ymy8vd.png"
+        },
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/b7fdb6f2-819a-4af8-a8e0-4e8a4db6ae08/variant/1782748006668-0myh6f.png"
+        },
+        {
+          "name": "Peacoat",
+          "hex": "#24263a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/b7fdb6f2-819a-4af8-a8e0-4e8a4db6ae08/variant/1782748000840-jdb7lc.png"
+        }
+      ],
+      "colors": [
+        "M.Grey Heather",
+        "Black",
+        "Peacoat"
+      ]
+    },
+    {
+      "id": "15f512b1-2074-4434-9bb8-4ed7b4848596",
+      "brandName": "Caslay",
+      "name": "Caslay Organic Polo T-shirt",
+      "description": "Experience the perfect blend of sustainability, comfort, and premium style with this organic polo t-shirt, crafted from certified handpicked cotton for a soft, breathable, and skin-friendly feel. Material: Made from 100% organically grown handpicked cotton for a natural and premium finish. Fit: Designed for all-day wearability with a comfortable and easy standard fit. Sustainability: Certified sustainable fabric with reduced water, power, and CO2 impact. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style Options: Available in 25+ colour options with custom Pantone colour selection.",
+      "price": 999,
+      "purchasePrice": 0,
+      "sellingPrice": 999,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662031805-3t63a7.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662031805-3t63a7.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662035668-i3r3uw.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662039617-lir7w2.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662042386-iiwvc3.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662045991-fb6duu.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662048836-22sdtq.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662052814-nk0ny6.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662056729-e7h364.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662059488-i508y5.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662062955-fne2vk.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662066373-427u7n.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662069283-65wwxi.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662072044-qke3y1.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662074531-ysilu5.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662077698-ykroli.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662080176-iwi361.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662082696-0v99n5.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662085245-3geb80.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662088488-ak6on0.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662091311-8her1v.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662094999-8ggc10.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662097434-6gro8d.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662099703-pam563.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Willow",
+          "hex": "#922853",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662031805-3t63a7.png"
+        },
+        {
+          "name": "Teal",
+          "hex": "#7ab8c5",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662035668-i3r3uw.png"
+        },
+        {
+          "name": "Strom Grey",
+          "hex": "#e8eadd",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662039617-lir7w2.png"
+        },
+        {
+          "name": "Red Violet",
+          "hex": "#cb7580",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662042386-iiwvc3.png"
+        },
+        {
+          "name": "Purple",
+          "hex": "#b78497",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662045991-fb6duu.png"
+        },
+        {
+          "name": "Prism Violet",
+          "hex": "#66527d",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662048836-22sdtq.png"
+        },
+        {
+          "name": "Olive Green",
+          "hex": "#b8c288",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662052814-nk0ny6.png"
+        },
+        {
+          "name": "Mustard",
+          "hex": "#d2b47f",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662056729-e7h364.png"
+        },
+        {
+          "name": "Maroon",
+          "hex": "#611725",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662059488-i508y5.png"
+        },
+        {
+          "name": "Lavender",
+          "hex": "#c8aec0",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662062955-fne2vk.png"
+        },
+        {
+          "name": "Jade Green",
+          "hex": "#8a9289",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662066373-427u7n.png"
+        },
+        {
+          "name": "Illuminating",
+          "hex": "#decd7c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662069283-65wwxi.png"
+        },
+        {
+          "name": "Ice Water",
+          "hex": "#cde0e5",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662072044-qke3y1.png"
+        },
+        {
+          "name": "Forest Green",
+          "hex": "#466365",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662074531-ysilu5.png"
+        },
+        {
+          "name": "Curracao",
+          "hex": "#6fb2bd",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662077698-ykroli.png"
+        },
+        {
+          "name": "Coral",
+          "hex": "#db664c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662080176-iwi361.png"
+        },
+        {
+          "name": "Chocolate",
+          "hex": "#49332c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662082696-0v99n5.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662085245-3geb80.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662088488-ak6on0.png"
+        },
+        {
+          "name": "Orange",
+          "hex": "#e36520",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662091311-8her1v.png"
+        },
+        {
+          "name": "Royal Blue",
+          "hex": "#2962a3",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662094999-8ggc10.png"
+        },
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662097434-6gro8d.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4b85defc-7847-4b53-b2f6-c6e3990f7b79/variant/1782662099703-pam563.png"
+        }
+      ],
+      "colors": [
+        "Willow",
+        "Teal",
+        "Strom Grey",
+        "Red Violet",
+        "Purple",
+        "Prism Violet",
+        "Olive Green",
+        "Mustard",
+        "Maroon",
+        "Lavender",
+        "Jade Green",
+        "Illuminating",
+        "Ice Water",
+        "Forest Green",
+        "Curracao",
+        "Coral",
+        "Chocolate",
+        "Red",
+        "White",
+        "Orange",
+        "Royal Blue",
+        "Black",
+        "Navy Blue"
+      ]
+    },
+    {
+      "id": "92212f68-3581-4d2d-9b20-51c6818aae19",
+      "brandName": "Alcis",
+      "name": "Alcis Premium Track Jacket",
+      "description": "Upgrade your athletic wardrobe with this sleek black Alcis Premium Track Jacket featuring contrasting white sleeve stripes and a full zip. Crafted for comfort and performance, it makes an ideal canvas for custom printing. Get your team or corporate branding printed today at Printfield, Whitefield Bangalore.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/98a85faf-0458-4756-959c-aced16e5d90f/variant/1782738199755-h48lfo.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/98a85faf-0458-4756-959c-aced16e5d90f/variant/1782738199755-h48lfo.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/98a85faf-0458-4756-959c-aced16e5d90f/variant/1782738199755-h48lfo.png"
+        }
+      ],
+      "colors": [
+        "Black"
+      ]
+    },
+    {
+      "id": "b0dca1cf-9924-4a4f-821a-5c7e760570da",
+      "brandName": "Indian",
+      "name": "Indian Terrain Classic Solid Polo T-shirt",
+      "description": "Classic solid polo t-shirt made from soft and durable cotton-poly stretch fabric, designed to offer all-day comfort with a neat and versatile look for both casual and semi-formal wear. Material: Crafted from cotton-poly stretch fabric for a comfortable feel, better flexibility, and lasting durability. Fit: Regular fit that provides a balanced silhouette and easy all-day wearability. Styling: Polo short-sleeve design that gives a clean, timeless, and smart appearance. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Sizes Available: Offered in sizes S to 3XL for a wide and inclusive fit range.",
+      "price": 799,
+      "purchasePrice": 0,
+      "sellingPrice": 799,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493248391-r74wdj.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493248391-r74wdj.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493249317-4zrbos.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493250332-h1r0qa.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493252393-czgu46.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493253398-cskovm.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493254479-rdw3gh.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493255426-7nuqyj.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493248391-r74wdj.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493249317-4zrbos.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493250332-h1r0qa.png"
+        },
+        {
+          "name": "Cobalt",
+          "hex": "#4078b7",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493252393-czgu46.png"
+        },
+        {
+          "name": "Maroon",
+          "hex": "#651d25",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493253398-cskovm.png"
+        },
+        {
+          "name": "Teal",
+          "hex": "#38546a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493254479-rdw3gh.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/870b144d-b371-469c-af62-aa85ee1ab10a/variant/1782493255426-7nuqyj.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Red",
+        "Navy Blue",
+        "Cobalt",
+        "Maroon",
+        "Teal",
+        "White"
+      ]
+    },
+    {
+      "id": "22874ea2-2df2-4ef3-899b-1ee9817e01a5",
+      "brandName": "Swiss",
+      "name": "Swiss Military Elite Polo Tshirt",
+      "description": "Experience the perfect blend of comfort, durability, and refined style with the Swiss Military Elite Polo T-Shirt, designed for everyday wear, office settings, and casual outings. Material: Crafted from 80% cotton and 20% polyester for a soft, breathable, and durable feel. Fit: Regular fit designed to provide easy movement and all-day comfort. Fabric Quality: Made with 2-ply premium yarn and 100% pique knit for a premium finish. Styling: Features ribbed cuffs, a multi-color front placket, and buttons for a smart, modern look. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Wearability: The fabric is breathable, abrasion-resistant, and designed to maintain a neat look with minimal wrinkles. Sizes Available: S, M, L, XL, XXL",
+      "price": 999,
+      "purchasePrice": 0,
+      "sellingPrice": 999,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a21a37c9-a937-4e70-82c5-e71e5f8fdaef/variant/1782618816014-onm9by.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a21a37c9-a937-4e70-82c5-e71e5f8fdaef/variant/1782618816014-onm9by.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a21a37c9-a937-4e70-82c5-e71e5f8fdaef/variant/1782618819872-cf3ize.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a21a37c9-a937-4e70-82c5-e71e5f8fdaef/variant/1782618823938-lk1jyq.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a21a37c9-a937-4e70-82c5-e71e5f8fdaef/variant/1782618816014-onm9by.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a21a37c9-a937-4e70-82c5-e71e5f8fdaef/variant/1782618819872-cf3ize.png"
+        },
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a21a37c9-a937-4e70-82c5-e71e5f8fdaef/variant/1782618823938-lk1jyq.png"
+        }
+      ],
+      "colors": [
+        "White",
+        "Navy Blue",
+        "Black"
+      ]
+    },
+    {
+      "id": "a5d53c0a-1beb-481b-a761-dcba198f8744",
+      "brandName": "Caslay",
+      "name": "Caslay Recycled Poly-Cotton Polo T-shirt",
+      "description": "Experience the perfect blend of sustainability, comfort, and durability with this recycled poly-cotton polo t-shirt, made from recycled cotton and PET bottle scrap for a soft, premium feel. Material: Made from 60% recycled cotton and 40% recycled polyester derived from PET bottle scrap. Fit: Designed with a comfortable standard fit for easy all-day wear. Sustainability: Certified sustainable fabric with reduced water, power, and carbon impact. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Eco Features: Made without dyes or harsh chemicals for a cleaner and safer finish. Innovation: Produced through a proprietary patent-pending process for responsible manufacturing.",
+      "price": 999,
+      "purchasePrice": 0,
+      "sellingPrice": 999,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664682475-jji4o4.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664682475-jji4o4.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664685317-pv4mch.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664688696-uf5mct.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664691830-1hy4yh.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664694797-d4jvmh.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664698182-tr1b5r.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664701837-tu7wbi.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664682475-jji4o4.png"
+        },
+        {
+          "name": "Mustard",
+          "hex": "#d2b47f",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664685317-pv4mch.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664688696-uf5mct.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664691830-1hy4yh.png"
+        },
+        {
+          "name": "Royal Blue",
+          "hex": "#2962a3",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664694797-d4jvmh.png"
+        },
+        {
+          "name": "Charcoal Black",
+          "hex": "#050505",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664698182-tr1b5r.png"
+        },
+        {
+          "name": "White Melange",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/7d5970a0-49a2-46be-a468-01e5a0c13a38/variant/1782664701837-tu7wbi.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Mustard",
+        "Navy Blue",
+        "Red",
+        "Royal Blue",
+        "Charcoal Black",
+        "White Melange"
+      ]
+    },
+    {
+      "id": "8baca42a-e878-43f3-b1c7-f9508f84ea98",
+      "brandName": "Caslay",
+      "name": "Caslay Zippered Hoodie",
+      "description": "Experience the perfect blend of comfort, sustainability, and easy everyday style with this zippered hoodie, made from recycled PET bottle scrap for a soft, durable, and lightweight feel. Material: Made from 60% recycled cotton and 40% recycled polyester derived from PET bottle scrap. Fit: Designed with a comfortable fit for easy layering and all-day wear. Sustainability: Certified sustainable fabric with reduced water, power, and carbon impact. Print Area: 3.5 inch Front Area Personalisation: Front Customisation Offered. Style: A versatile zippered hoodie ideal for casual outings, travel, and relaxed wear.",
+      "price": 999,
+      "purchasePrice": 0,
+      "sellingPrice": 999,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/6866664d-ca64-4f5e-81ee-4a7fdc422e31/variant/1782735992532-fj8v85.png",
+      "subCategory": "Hoodies & Sweatshirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/6866664d-ca64-4f5e-81ee-4a7fdc422e31/variant/1782735992532-fj8v85.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/6866664d-ca64-4f5e-81ee-4a7fdc422e31/variant/1782735995190-r9vema.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/6866664d-ca64-4f5e-81ee-4a7fdc422e31/variant/1782735997665-zczexj.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/6866664d-ca64-4f5e-81ee-4a7fdc422e31/variant/1782735999708-8z9y6l.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "White Melange",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/6866664d-ca64-4f5e-81ee-4a7fdc422e31/variant/1782735992532-fj8v85.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/6866664d-ca64-4f5e-81ee-4a7fdc422e31/variant/1782735995190-r9vema.png"
+        },
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/6866664d-ca64-4f5e-81ee-4a7fdc422e31/variant/1782735997665-zczexj.png"
+        },
+        {
+          "name": "Charcoal Melange",
+          "hex": "#282a2a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/6866664d-ca64-4f5e-81ee-4a7fdc422e31/variant/1782735999708-8z9y6l.png"
+        }
+      ],
+      "colors": [
+        "White Melange",
+        "Navy Blue",
+        "Black",
+        "Charcoal Melange"
+      ]
+    },
+    {
+      "id": "af50579f-2fe7-442c-963a-10a4040d7f7e",
+      "brandName": "Indian",
+      "name": "Indian Terrain Full Zipper Lycra Jacket",
+      "description": "Experience the perfect blend of comfort, flexibility, and everyday style with this full zipper lycra jacket, made from cotton poly stretch fabric for a smooth and regular fit. Material: Crafted from cotton poly stretch fabric for comfort, flexibility, and durability. Fit: Regular fit designed to offer easy movement and all-day wearability. Styling: Full-zip front style with a clean, sporty look and versatile appeal. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Use: Suitable for casual wear, travel, layering, and everyday comfort.",
+      "price": 999,
+      "purchasePrice": 0,
+      "sellingPrice": 999,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a86fae94-55a6-497a-9ea2-e35bdf083956/variant/1782739114831-3uk0il.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a86fae94-55a6-497a-9ea2-e35bdf083956/variant/1782739114831-3uk0il.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a86fae94-55a6-497a-9ea2-e35bdf083956/variant/1782739116973-w29wij.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a86fae94-55a6-497a-9ea2-e35bdf083956/variant/1782739114831-3uk0il.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a86fae94-55a6-497a-9ea2-e35bdf083956/variant/1782739116973-w29wij.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Navy Blue"
+      ]
+    },
+    {
+      "id": "0292f6b5-fd38-421c-b70b-bab0d2901f1a",
+      "brandName": "Indian",
+      "name": "Indian Terrain Classic Solid Crew Neck T-shirt",
+      "description": "Experience clean everyday style and lasting comfort with this classic solid crew neck T-shirt, made from cotton stretch fabric for a regular fit. Fabric: Cotton stretch for soft comfort and ease of movement. Fit: Regular fit designed for everyday wear. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Styling: Simple and versatile, suitable for casual and relaxed looks.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a426a21e-e8ff-4ae7-aef1-b2e340fd2559/variant/1782827280083-jeiuf8.png",
+      "subCategory": "Round Neck T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a426a21e-e8ff-4ae7-aef1-b2e340fd2559/variant/1782827280083-jeiuf8.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a426a21e-e8ff-4ae7-aef1-b2e340fd2559/variant/1782827282168-xncakm.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a426a21e-e8ff-4ae7-aef1-b2e340fd2559/variant/1782827284117-oygqer.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a426a21e-e8ff-4ae7-aef1-b2e340fd2559/variant/1782827280083-jeiuf8.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a426a21e-e8ff-4ae7-aef1-b2e340fd2559/variant/1782827282168-xncakm.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/a426a21e-e8ff-4ae7-aef1-b2e340fd2559/variant/1782827284117-oygqer.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Navy Blue",
+        "White"
+      ]
+    },
+    {
+      "id": "254d24d4-c8d9-4fa0-be4f-776e39ee5225",
+      "brandName": "Caslay",
+      "name": "Caslay Quick Dry Polo",
+      "description": "Experience the perfect blend of comfort, performance, and sustainability with this quick-dry polo t-shirt, made from recycled PET bottle scrap for a lightweight and breathable feel. Material: Made from 100% recycled PET bottle scrap (Polyester) for a sustainable and durable finish. Fit: Designed with a comfortable fit that supports easy movement and everyday wear. Performance: Quick-dry fabric helps keep you fresh, dry, and comfortable for longer. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Eco Features: Crafted using certified dyes and chemicals with a low-impact manufacturing process. Sustainability: Produced to reduce water usage, power consumption, and carbon emissions.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736796213-84c73c.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736796213-84c73c.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736800234-udhj6u.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736802935-68uhb0.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736806033-arti1j.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736809426-lb93ih.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736811987-dsz104.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736814882-yhec1b.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736817480-yoh9v2.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Azure Blue",
+          "hex": "#0ba1cc",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736796213-84c73c.png"
+        },
+        {
+          "name": "Elephant Grey",
+          "hex": "#49464c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736800234-udhj6u.png"
+        },
+        {
+          "name": "Peach",
+          "hex": "#eec5a5",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736802935-68uhb0.png"
+        },
+        {
+          "name": "Salt White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736806033-arti1j.png"
+        },
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736809426-lb93ih.png"
+        },
+        {
+          "name": "Lavender",
+          "hex": "#c8aec0",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736811987-dsz104.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736814882-yhec1b.png"
+        },
+        {
+          "name": "Olive Green",
+          "hex": "#b8c288",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/86d89f3e-60d9-4836-b884-ea458bca16bb/variant/1782736817480-yoh9v2.png"
+        }
+      ],
+      "colors": [
+        "Azure Blue",
+        "Elephant Grey",
+        "Peach",
+        "Salt White",
+        "Black",
+        "Lavender",
+        "Navy Blue",
+        "Olive Green"
+      ]
+    },
+    {
+      "id": "0659709d-7a05-426a-ab95-a1476918b706",
+      "brandName": "Indian",
+      "name": "Indian Terrain Bomber jacket",
+      "description": "Experience the perfect blend of comfort, warmth, and versatile style with this lined bomber jacket, made from durable polyester for a smooth regular fit and everyday wear. Material: Crafted from polyester for a durable, lightweight, and easy-to-wear finish. Fit: Regular fit designed for comfortable movement and all-day wearability. Styling: Lined construction adds warmth, structure, and a premium feel. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Use: Suitable for casual outings, travel, layering, and everyday comfort.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/2ca9cd71-2b91-4745-bef7-ec35b924244e/variant/1782740868546-r2d1na.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/2ca9cd71-2b91-4745-bef7-ec35b924244e/variant/1782740868546-r2d1na.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/2ca9cd71-2b91-4745-bef7-ec35b924244e/variant/1782740870433-m1shww.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/2ca9cd71-2b91-4745-bef7-ec35b924244e/variant/1782740872470-rfc5jz.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/2ca9cd71-2b91-4745-bef7-ec35b924244e/variant/1782740868546-r2d1na.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/2ca9cd71-2b91-4745-bef7-ec35b924244e/variant/1782740870433-m1shww.png"
+        },
+        {
+          "name": "Olive Green",
+          "hex": "#b8c288",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/2ca9cd71-2b91-4745-bef7-ec35b924244e/variant/1782740872470-rfc5jz.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Navy Blue",
+        "Olive Green"
+      ]
+    },
+    {
+      "id": "d95c1156-de05-46ac-b9a9-fa30b8b81037",
+      "brandName": "Puma",
+      "name": "Puma Woven Track Jacket",
+      "description": "Experience reliable style and everyday comfort with this black-white poplin jacket, crafted from lightweight 100% polyester for versatile wear. Material: Made from 100% polyester poplin with a WR PFC-free finish and 85 GSM construction. Fit: Designed for a comfortable standard fit that supports easy movement. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style Use: Suitable for casual outings, travel, and lightweight outerwear.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/969ecd07-4c46-4c62-aed2-e46fca720c10/variant/1782799637251-1neowi.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/969ecd07-4c46-4c62-aed2-e46fca720c10/variant/1782799637251-1neowi.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/969ecd07-4c46-4c62-aed2-e46fca720c10/variant/1782799639811-lwq53v.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/969ecd07-4c46-4c62-aed2-e46fca720c10/variant/1782799640629-6ldpu5.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/969ecd07-4c46-4c62-aed2-e46fca720c10/variant/1782799641448-zvy4yu.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/969ecd07-4c46-4c62-aed2-e46fca720c10/variant/1782799637251-1neowi.png"
+        },
+        {
+          "name": "Peacoat",
+          "hex": "#24263a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/969ecd07-4c46-4c62-aed2-e46fca720c10/variant/1782799639811-lwq53v.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Peacoat"
+      ]
+    },
+    {
+      "id": "8f8e9f5b-fbc2-46c8-b678-25b86f21718b",
+      "brandName": "Caslay",
+      "name": "Caslay Hoodie",
+      "description": "Experience sustainable comfort and responsible style with this eco-friendly product, crafted from recycled cotton and recycled PET bottle scrap for a softer footprint. Material: Made from 60% recycled cotton and 40% recycled PET bottle scrap. Sustainability: Uses 18.13 kgs of CO2 saved compared with conventional production. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Fabric Feel: Feels like virgin cotton while keeping the product eco-conscious.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/697b7928-e71d-4d35-a107-a97b17f2a48b/variant/1782821553186-6s9uj0.png",
+      "subCategory": "Hoodies & Sweatshirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/697b7928-e71d-4d35-a107-a97b17f2a48b/variant/1782821553186-6s9uj0.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/697b7928-e71d-4d35-a107-a97b17f2a48b/variant/1782821555331-rbuwxi.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/697b7928-e71d-4d35-a107-a97b17f2a48b/variant/1782821557483-90k4x7.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/697b7928-e71d-4d35-a107-a97b17f2a48b/variant/1782821560247-h57r5i.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/697b7928-e71d-4d35-a107-a97b17f2a48b/variant/1782821553186-6s9uj0.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/697b7928-e71d-4d35-a107-a97b17f2a48b/variant/1782821555331-rbuwxi.png"
+        },
+        {
+          "name": "White Melange",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/697b7928-e71d-4d35-a107-a97b17f2a48b/variant/1782821557483-90k4x7.png"
+        },
+        {
+          "name": "Charcoal Melange",
+          "hex": "#282a2a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/697b7928-e71d-4d35-a107-a97b17f2a48b/variant/1782821560247-h57r5i.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Navy Blue",
+        "White Melange",
+        "Charcoal Melange"
+      ]
+    },
+    {
+      "id": "0b04b5de-fdf2-4b81-bef0-ed99fdebb0c5",
+      "brandName": "Swiss",
+      "name": "Swiss Military Alpine Interlock Zipper Jacket",
+      "description": "Upgrade your corporate wardrobe with the Swiss Military Alpine Interlock Zipper Jacket, featuring contrasting black shoulder panels, a high neck, and convenient side seam pockets. Crafted from premium grey heather poly-interlock fabric, it offers a regular fit and durable metal zipper closure. Get this premium jacket custom-branded with your company logo at Printfield in Whitefield, Bangalore.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/9b9328f2-1067-4ebc-ba10-f7c330c44825/variant/1782800596320-xb59fo.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/9b9328f2-1067-4ebc-ba10-f7c330c44825/variant/1782800596320-xb59fo.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/9b9328f2-1067-4ebc-ba10-f7c330c44825/variant/1782800978950-4kb3hv.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/9b9328f2-1067-4ebc-ba10-f7c330c44825/variant/1782800596320-xb59fo.png"
+        },
+        {
+          "name": "Grey Melange",
+          "hex": "#7a7a7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/9b9328f2-1067-4ebc-ba10-f7c330c44825/variant/1782800978950-4kb3hv.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Grey Melange"
+      ]
+    },
+    {
+      "id": "767da504-759b-40b6-87c1-89250a504fe7",
+      "brandName": "Swiss",
+      "name": "Swiss Military Dynamic Full Zipper jacket",
+      "description": "Experience durable comfort and everyday style with this premium cotton-poly zipper jacket, crafted for long-lasting wear and a soft, breathable feel. Material: Made from 80% cotton and 20% polyester with a 280 GSM fabric weight. Fit: Designed for a comfortable standard fit with stretchable ribbed cuffs and bottom for ease of movement. Feel: Soft, breathable, and abrasion-resistant fabric offers lasting comfort and durability. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style Use: Ideal for daily wear, travel, and smart casual layering.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/143acc2f-4149-4bc5-8b1c-7af5dc6dc4df/variant/1782801920263-soke22.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/143acc2f-4149-4bc5-8b1c-7af5dc6dc4df/variant/1782801920263-soke22.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/143acc2f-4149-4bc5-8b1c-7af5dc6dc4df/variant/1782801920263-soke22.png"
+        }
+      ],
+      "colors": [
+        "Black"
+      ]
+    },
+    {
+      "id": "8da0599e-328c-4426-a26c-840c581fe9ce",
+      "brandName": "Swiss",
+      "name": "Swiss Military Dynamic Hoodie",
+      "description": "Upgrade your wardrobe with this sleek black Swiss Military Dynamic Hoodie featuring soft premium cotton, a kangaroo front pocket, and an adjustable drawstring hood. Personalize this regular fit apparel with your custom branding at Printfield, Whitefield Bangalore.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1794bd15-4aa1-45a5-bc10-d2a5dc5b6830/variant/1782826395691-vtwlk5.png",
+      "subCategory": "Hoodies & Sweatshirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1794bd15-4aa1-45a5-bc10-d2a5dc5b6830/variant/1782826395691-vtwlk5.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/1794bd15-4aa1-45a5-bc10-d2a5dc5b6830/variant/1782826395691-vtwlk5.png"
+        }
+      ],
+      "colors": [
+        "Black"
+      ]
+    },
+    {
+      "id": "0f6a59d4-7dd8-4336-9c15-9d8da8e676f1",
+      "brandName": "Puma",
+      "name": "Puma Premium Zippered Hoodie",
+      "description": "Experience casual comfort and everyday style with this navy blue French terry sweatshirt, crafted from a soft cotton-poly blend for durable wear. Material: Made from 52% cotton and 48% polyester French terry fabric with a 260 GSM build. Fit: Designed for a comfortable standard fit suitable for daily wear. Feel: Soft, breathable, and durable for all-day comfort. Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style Use: Ideal for casual outings, layering, travel, and relaxed everyday wear.",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e72c7258-81e8-4bea-baf4-78d45994f338/variant/1782822709997-re40k9.png",
+      "subCategory": "Hoodies & Sweatshirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e72c7258-81e8-4bea-baf4-78d45994f338/variant/1782822709997-re40k9.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e72c7258-81e8-4bea-baf4-78d45994f338/variant/1782822713686-bgdcj5.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e72c7258-81e8-4bea-baf4-78d45994f338/variant/1782822716448-duxyhx.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e72c7258-81e8-4bea-baf4-78d45994f338/variant/1782822709997-re40k9.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e72c7258-81e8-4bea-baf4-78d45994f338/variant/1782822713686-bgdcj5.png"
+        },
+        {
+          "name": "Flat Mid Grey",
+          "hex": "#888b91",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e72c7258-81e8-4bea-baf4-78d45994f338/variant/1782822716448-duxyhx.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "Navy Blue",
+        "Flat Mid Grey"
+      ]
+    },
+    {
+      "id": "e7c4f399-dcd8-46e8-8501-65ba22277fb3",
+      "brandName": "Adidas",
+      "name": "Adidas Dry-Fit Polo T-shirt With Strips",
+      "description": "Enjoy a perfect mix of comfort and style with this Cool Navy 100% polyester T-shirt. Its lightweight build and regular fit make it a reliable choice for everyday wear, casual outings, and active days. Material: 100% Polyester Fit: Regular fit for comfortable all-day wear Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style: Lightweight, durable, and ideal for daily casual use",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910350472-z1l667.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910350472-z1l667.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910354158-pv5zd9.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910356193-nvwexd.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910358313-2yzmf4.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910360407-yfu4ms.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Cool navy",
+          "hex": "#001e57",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910350472-z1l667.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910354158-pv5zd9.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910356193-nvwexd.png"
+        },
+        {
+          "name": "Blue",
+          "hex": "#4061a1",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910358313-2yzmf4.png"
+        },
+        {
+          "name": "Grey",
+          "hex": "#747270",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53a3ce85-eb13-42ae-a7c4-b25f2e936953/variant/1782910360407-yfu4ms.png"
+        }
+      ],
+      "colors": [
+        "Cool navy",
+        "Red",
+        "White",
+        "Blue",
+        "Grey"
+      ]
+    },
+    {
+      "id": "9b043bc0-752a-464a-9e0e-8cc94693b5d5",
+      "brandName": "Adidas",
+      "name": "Adidas Round Neck T-shirt",
+      "description": "Enjoy everyday comfort and effortless style with this Cool Navy round neck T-shirt, crafted from 100% polyester for a lightweight and durable feel. Its regular fit makes it ideal for daily wear, casual outings, and active routines. Material: 100% Polyester Fit: Regular fit for comfortable all-day wear Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style: Lightweight, durable, and ideal for daily casual use",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53bd1e85-41a4-4997-b421-15662dc30025/variant/1782914828526-uti8pc.png",
+      "subCategory": "Round Neck T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53bd1e85-41a4-4997-b421-15662dc30025/variant/1782914828526-uti8pc.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53bd1e85-41a4-4997-b421-15662dc30025/variant/1782914833197-9dmiph.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53bd1e85-41a4-4997-b421-15662dc30025/variant/1782914836533-89kpg4.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53bd1e85-41a4-4997-b421-15662dc30025/variant/1782914838673-ze7hdi.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Cat Eneblu",
+          "hex": "#3bd8f7",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53bd1e85-41a4-4997-b421-15662dc30025/variant/1782914828526-uti8pc.png"
+        },
+        {
+          "name": "Cat Syello",
+          "hex": "#eaf73b",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53bd1e85-41a4-4997-b421-15662dc30025/variant/1782914833197-9dmiph.png"
+        },
+        {
+          "name": "Orange",
+          "hex": "#e36520",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53bd1e85-41a4-4997-b421-15662dc30025/variant/1782914836533-89kpg4.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/53bd1e85-41a4-4997-b421-15662dc30025/variant/1782914838673-ze7hdi.png"
+        }
+      ],
+      "colors": [
+        "Cat Eneblu",
+        "Cat Syello",
+        "Orange",
+        "Navy Blue"
+      ]
+    },
+    {
+      "id": "d10483ab-11f8-4b6f-a45a-a6676166c178",
+      "brandName": "Adidas",
+      "name": "Adidas Dry-Fit Polo T-shirt",
+      "description": "Experience sporty comfort and everyday versatility with this 100% polyester T-shirt in a clean Cool Navy shade. Designed with a regular fit and durable fabric, it offers a lightweight feel that works well for casual wear and active routines. Material: 100% Polyester Fit: Regular fit for all-day comfort Print Area: 3.5 inch Front Area Personalisation: Front Customisation Offered Style: Durable, lightweight, and suitable for daily casual wear",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889698286-rzgd6u.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889698286-rzgd6u.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889701790-cwzi2j.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889704010-0uor4h.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889706456-5tjo7s.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889709521-nwztep.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889712292-ehfbq0.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889714339-6yxrrm.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889698286-rzgd6u.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889701790-cwzi2j.png"
+        },
+        {
+          "name": "Grey",
+          "hex": "#747270",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889704010-0uor4h.png"
+        },
+        {
+          "name": "Blue",
+          "hex": "#4061a1",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889706456-5tjo7s.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889709521-nwztep.png"
+        },
+        {
+          "name": "Yellow",
+          "hex": "#fffb00",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889712292-ehfbq0.png"
+        },
+        {
+          "name": "Cool navy",
+          "hex": "#001e57",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/e9f996a5-f786-4db7-8fb3-22e066782be9/variant/1782889714339-6yxrrm.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "White",
+        "Grey",
+        "Blue",
+        "Red",
+        "Yellow",
+        "Cool navy"
+      ]
+    },
+    {
+      "id": "6a7840c0-9642-41a1-a645-b182c72b6f08",
+      "brandName": "Adidas",
+      "name": "Adidas Clima Lite Polo T-shirt",
+      "description": "Experience lightweight comfort and sporty style with this 100% polyester T-shirt, designed for all-day wear and a clean modern look. The black and white color options add versatility, while the regular fit and durable fabric make it ideal for casual and active use. Material: 100% Polyester Fit: Regular fit for comfortable everyday wear Print Area: 3.5 inch Front Area Personalisation: Front Customisation Offered Style: Durable, easy to wear, and suitable for casual outings",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888890831-gfqyvy.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888890831-gfqyvy.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888894405-nzygoy.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888896577-ubkoet.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888898915-znww9x.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888900828-ilmclz.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888903195-0gv2ji.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888890831-gfqyvy.png"
+        },
+        {
+          "name": "White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888894405-nzygoy.png"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#002e7a",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888896577-ubkoet.png"
+        },
+        {
+          "name": "Grey",
+          "hex": "#747270",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888898915-znww9x.png"
+        },
+        {
+          "name": "Yellow",
+          "hex": "#fffb00",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888900828-ilmclz.png"
+        },
+        {
+          "name": "B Royal Blue",
+          "hex": "#0056d6",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/051570f1-f0d2-47c5-8855-1df61dcba457/variant/1782888903195-0gv2ji.png"
+        }
+      ],
+      "colors": [
+        "Black",
+        "White",
+        "Navy Blue",
+        "Grey",
+        "Yellow",
+        "B Royal Blue"
+      ]
+    },
+    {
+      "id": "11038ec0-d696-44e7-8b51-6f9a2520bc24",
+      "brandName": "Caslay",
+      "name": "Caslay Halfway Jacket",
+      "description": "Experience sustainable style and everyday comfort with this jacket, crafted from 100% certified sustainable fabric made with 60% recycled cotton and 40% recycled PET bottle scrap. Designed for a softer feel and lower environmental impact, it combines modern wearability with responsible construction. Material: 100% Certified Sustainable Fabric Composition: 60% Recycled Cotton + 40% Recycled PET Bottle Scrap Print Area: 3.5 inch Front Area Personalisation: Front Customization Offered Style: Ideal for conscious everyday wear",
+      "price": 499,
+      "purchasePrice": 0,
+      "sellingPrice": 499,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4dd13394-540e-413a-bb05-091284381c06/variant/1782915598652-ej8njp.png",
+      "subCategory": "Jackets",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4dd13394-540e-413a-bb05-091284381c06/variant/1782915598652-ej8njp.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/4dd13394-540e-413a-bb05-091284381c06/variant/1782915598652-ej8njp.png"
+        }
+      ],
+      "colors": [
+        "Black"
+      ]
+    },
+    {
+      "id": "de795344-94d0-447b-a5e5-7a610b8a4a63",
+      "brandName": "Puma",
+      "name": "Puma Pique Tipping Polo T-shirt",
+      "description": "Experience the perfect blend of ease and professionalism with this Classic Polo, expertly tailored from a premium cotton-poly blend for both office environments and relaxed outings.",
+      "price": 999,
+      "purchasePrice": 0,
+      "sellingPrice": 999,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483126884-iofylg.png",
+      "subCategory": "Polo T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483126884-iofylg.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483129639-g3fm1t.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483133327-ba894j.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483136242-hzie9t.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483138989-faqr7o.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483143458-1b5fp7.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483146800-01s1ze.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "Black With Zinfandel Tipping",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483126884-iofylg.png"
+        },
+        {
+          "name": "Grey Heather With Black Tipping",
+          "hex": "#b5bfc0",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483129639-g3fm1t.png"
+        },
+        {
+          "name": "Peacoat With White Tipping",
+          "hex": "#22283f",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483133327-ba894j.png"
+        },
+        {
+          "name": "Red With White tipping",
+          "hex": "#e6222b",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483136242-hzie9t.png"
+        },
+        {
+          "name": "White With Sodalite Tipping",
+          "hex": "#f3f2f7",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483138989-faqr7o.png"
+        },
+        {
+          "name": "Sodalite With White Tipping",
+          "hex": "#2d3874",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483143458-1b5fp7.png"
+        },
+        {
+          "name": "Black With White Tipping",
+          "hex": "#000000",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/dd984bda-3d48-4b9e-9a4e-176a6fb4c42b/variant/1782483146800-01s1ze.png"
+        }
+      ],
+      "colors": [
+        "Black With Zinfandel Tipping",
+        "Grey Heather With Black Tipping",
+        "Peacoat With White Tipping",
+        "Red With White tipping",
+        "White With Sodalite Tipping",
+        "Sodalite With White Tipping",
+        "Black With White Tipping"
+      ]
+    },
+    {
+      "id": "102c3307-8341-492a-b336-7c48f8ddcb74",
+      "brandName": "Adidas",
+      "name": "Adidas Cotton T-shirt With Tipping",
+      "description": "Upgrade your corporate wear with the vibrant red Adidas Cotton T-shirt featuring a stylish white-tipped collar and breathable organic fabric. Crafted for a regular fit, it offers all-day comfort and professional styling. Personalize this premium apparel with custom printing at Printfield Whitefield Bangalore.",
+      "price": 699,
+      "purchasePrice": 0,
+      "sellingPrice": 699,
+      "gstRate": 18,
+      "category": "Apparel",
+      "imageUrl": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918513617-bnt92h.png",
+      "subCategory": "Round Neck T-Shirts",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "source": "Printfield",
+      "images": [
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918513617-bnt92h.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918516070-5e0p5r.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918499374-95z6en.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918502964-cu7hp8.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918506956-fel72s.png",
+        "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918510441-g40m0d.png"
+      ],
+      "colorVariants": [
+        {
+          "name": "C Navy",
+          "hex": "#143466",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918513617-bnt92h.png"
+        },
+        {
+          "name": "Green",
+          "hex": "#26670e",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918516070-5e0p5r.png"
+        },
+        {
+          "name": "Red",
+          "hex": "#dd2c2c",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918499374-95z6en.png"
+        },
+        {
+          "name": "Grey",
+          "hex": "#747270",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918502964-cu7hp8.png"
+        },
+        {
+          "name": "C White",
+          "hex": "#ffffff",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918506956-fel72s.png"
+        },
+        {
+          "name": "C Royal",
+          "hex": "#1164e8",
+          "image": "https://ghzovkqxldotbwpumqzh.supabase.co/storage/v1/object/public/catalog-images/products/d236ccde-51d0-45e7-8251-22e4a53c4618/variant/1782918510441-g40m0d.png"
+        }
+      ],
+      "colors": [
+        "C Navy",
+        "Green",
+        "Red",
+        "Grey",
+        "C White",
+        "C Royal"
+      ]
+    }
+  ],
+  "categories": [
+    "Mugs",
+    "T-Shirts",
+    "Notebooks",
+    "Water Bottles",
+    "Business Cards",
+    "Flyers",
+    "Posters",
+    "Banners",
+    "Apparel"
+  ],
+  "masterPrices": []
 }
